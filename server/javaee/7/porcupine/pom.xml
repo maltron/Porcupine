@@ -9,7 +9,6 @@
     <modules>
         <module>common</module>
         <module>authorization_server</module>
-        <module>sample-client2</module>
         <module>lib/resource_server</module>
         <module>test-rs/sample-client2</module>
         <module>test-rs/test-authorizationcode</module>
