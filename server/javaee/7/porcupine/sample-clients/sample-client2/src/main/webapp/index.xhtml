@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>index</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form id="formindex">
+            <p:button href="http://localhost:8080/client/rest/person/authorization"
+                      value="REST: Person (Authorization Code)"/>
+            <p:button href="http://localhost:8080/client/rest/person/implicit"
+                      value="REST: Person (Implicit)...NOT WORKING :("/>
+            
+            <p:button href="http://localhost:8080/client/rest/person/resourceownerpasswordcredentials"
+                      value="REST: Person (Resource Owner Password Credentials)"/>
+            
+            <p:button href="http://localhost:8080/client/rest/person/clientcredentials"
+                      value="REST: Person (Client Credentials)"/>
+        </h:form>
+    </h:body>
+</html>
