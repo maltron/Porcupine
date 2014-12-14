@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>test8</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <h:outputStylesheet library="css" name="porcupine.css"/>
+    </h:head>
+    <h:body>
+        <h:form id="formtest8">
+            <p:panel id="panel" header="Header">
+                <p:selectOneListbox id="listbox" value="#{client.valueSelected}">
+                    <f:selectItems value="#{client.values}" var="a" itemLabel="#{a}" itemValue="#{a}"/>
+                    <p:ajax event="change" update="buttondelete"/>
+                </p:selectOneListbox>
+                <p:commandButton id="buttondelete" value="Delete" 
+                                 actionListener="#{client.testDelete}"
+                                 disabled="#{empty client.valueSelected}"
+                                 update="listbox buttondelete"/>
+                <p:inputText id="textadd" value="#{client.valueToAdd}"/>
+                <p:commandButton id="button" value="Add" actionListener="#{client.testAdd}" 
+                                 update=":formtest8:listbox :formtest8:textadd"/>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>formexample</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form id="formexample">
+            <p:focus id="focus" context="panel"/>
+            <p:growl id="messages" showSummary="true"/>
+            
+            <p:layout fullPage="true">
+                <p:layoutUnit position="north" style="border:none">
+                    <p:toolbar>
+                        <f:facet name="left">
+                            <p:menuButton value="Options">
+                                
+                                <p:menuitem value="Applications" actionListener="#{toolbarView.update}" 
+                                            update="messages" icon="ui-icon-locked"/>
+                                <p:menuitem value="Users" actionListener="#{toolbarView.save}" 
+                                            update="messages" icon="ui-icon-person" />
+                            </p:menuButton>
+                        </f:facet>
+                        
+                        <f:facet name="right">
+                            <p:commandButton type="button" value="New" icon="ui-icon-plusthick" />
+                            <p:commandButton type="button" value="Edit" icon="ui-icon-pencil" />
+                            <p:commandButton type="button" value="Delete" icon="ui-icon-trash" />
+
+                            <span class="ui-separator">
+                                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                            </span>
+
+                            <p:commandButton value="Logout" icon="ui-icon-extlink"/>
+                        </f:facet>
+                        
+                    </p:toolbar>
+
+                    <p:breadCrumb>
+                        <p:menuitem value="Categories" url="#" />
+                        <p:menuitem value="Sports" url="#" />
+                        <p:menuitem value="Basketball" url="#" />
+                        <p:menuitem value="NBA" url="#" />
+                        <p:menuitem value="Teams" url="#" />
+                        <p:menuitem value="L.A. Lakers" url="#" />
+                        <p:menuitem value="Roster" url="#" />
+                        <p:menuitem value="Kobe Bryant" url="#" />
+                    </p:breadCrumb>
+                </p:layoutUnit>
+
+
+                <p:layoutUnit position="west" style="border:none">
+                    <p:menu>
+                        <p:submenu label="User">
+                            <p:menuitem value="Photo" update="messages" icon="ui-icon-disk" />
+                            <p:menuitem value="Information" update="messages" icon="ui-icon-disk" />
+                            <p:menuitem value="Password" update="messages" icon="ui-icon-arrowrefresh-1-w"/>
+                        </p:submenu>
+                    </p:menu>
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center">
+                    <p:panel id="panel" header="Information" style="border:none">
+                        <h:panelGrid columns="3" cellpadding="5">
+                            <p:outputLabel id="labelone" for="inputone" value="One"/>
+                            <p:inputText id="inputone" value=""/>
+                            <p:message id="messageone" for="inputone"/>
+
+                            <p:outputLabel id="labeltwo" for="inputtwo" value="Two"/>
+                            <p:inputText id="inputtwo" value=""/>
+                            <p:message id="messagetwo" for="inputtwo"/>
+
+                            <p:outputLabel id="labelthree" for="inputthree" value="Three"/>
+                            <p:inputText id="inputthree" value=""/>
+                            <p:message id="messagethree" for="inputthree"/>
+
+                            <p:commandButton id="button"
+                                             value="Button" icon="ui-icon-key"
+                                             update="messages messageone messagetwo messagethree"/>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:layoutUnit>
+
+            </p:layout>
+
+
+
+
+        </h:form>
+    </h:body>
+</html>

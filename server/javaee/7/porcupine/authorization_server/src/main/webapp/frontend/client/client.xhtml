@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:composition template="/template/master.xhtml">
+
+        <!-- MENU MENU MENU MENU MENU MENU MENU MENU MENU MENU MENU MENU MENU -->
+        <ui:define name="menu">
+            <p:commandButton id="buttonnew" value="#{message['new']}" icon="ui-icon-plusthick" 
+                             actionListener="#{client.newClient()}"
+                             action="/frontend/client/newclient.xhtml"/>
+            <p:commandButton id="buttonedit" value="#{message['edit']}" 
+                             disabled="true"
+                             icon="ui-icon-pencil"/>
+            <p:commandButton id="buttondelete" value="#{message['delete']}" 
+                             actionListener="#{client.delete(clients.selected)}"
+                             action="/frontend/client/listclient.xhtml"
+                             icon="ui-icon-trash">
+                <p:confirm header="#{message['delete']}"
+                           message="#{message['delete.confirm']}"
+                           icon="ui-icon-alert"/>
+            </p:commandButton>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                <p:commandButton value="#{message['yes']}" type="button"
+                                 icon="ui-icon-check"
+                                 styleClass="ui-confirmdialog-yes"/>
+                <p:commandButton value="#{message['no']}" type="button"
+                                 icon="ui-icon-close"
+                                 styleClass="ui-confirmdialog-no"/>
+            </p:confirmDialog>
+        </ui:define>
+
+        <!-- NAVIGATION NAVIGATION NAVIGATION NAVIGATION NAVIGATION NAVIGATION -->
+        <ui:define name="navigation">
+            <ui:include src="/frontend/client/common/navigation.xhtml"/>
+            <p:menuitem value="#{message['client']}" url="#"/>
+        </ui:define>
+
+
+        <!-- CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT -->
+        <ui:define name="content">
+            <h:form id="formloading">
+                <h:inputSecret id="secretID" value="#{client.setID(storage.clientID)}"/>
+            </h:form>
+            
+            <!-- INFORMATION INFORMATION INFORMATION INFORMATION INFORMATION -->
+            <h:form id="forminfo">
+                <p:panel id="panelinfo" header="#{message['client']}: #{client.name}">
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:selectBooleanButton id="buttonenabled" value="#{client.enabled}"
+                                               onLabel="#{message['client.enabled']}" offLabel="#{message['client.disabled']}"
+                                               onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                        <p:spacer/>
+                        <p:spacer/>
+
+                        <p:outputLabel id="labelID" for="inputID" value="#{message['client.ID']}"/>
+                        <p:inputText id="inputID" value="#{client.ID}"
+                                     disabled="true" size="53"/>
+                        <p:commandButton id="buttonID" value="#{message['client.generate.new.ID']}"
+                                         actionListener="#{client.generateNewID()}"
+                                         update="inputID"/>
+
+                        <p:outputLabel id="labelSecret" for="inputsecret" value="#{message['client.secret']}"/>
+                        <p:inputText id="inputsecret" value="#{client.secret}" disabled="true"
+                                     size="53"/>
+                        <p:commandButton id="buttonsecret" value="#{message['client.generate.new.secret']}"
+                                         actionListener="#{client.generateNewSecret()}"
+                                         update="inputsecret"/>
+
+                        <p:outputLabel id="labelname" for="inputname" value="#{message['client.name']}"/>
+                        <p:inputText id="inputname" value="#{client.name}"
+                                     required="true" requiredMessage="#{message['client.name.required']}">
+                            <f:validateLength maximum="70"/>
+                        </p:inputText> 
+                        <p:message id="messagename" for="inputname"/>
+
+                        <p:outputLabel id="labelDescription" for="inputdescription" value="#{message['client.description']}"/>
+                        <p:inputTextarea id="inputdescription" value="#{client.description}">
+                            <f:validateLength maximum="255"/>
+                        </p:inputTextarea>
+                        <p:message id="messagearea" for="inputdescription"/>
+
+                    </h:panelGrid>
+
+                    <p:commandButton id="buttonsave" 
+                                     value="#{message['save']}" icon="ui-icon-disk"
+                                     update=":formmenu:messages messagename messagearea"
+                                     actionListener="#{client.saveClient}"
+                                     action="/frontend/client/listclient.xhtml"/>
+                </p:panel>
+
+            </h:form>
+
+            <!-- ADMINISTRATORS ADMINISTRATORS ADMINISTRATORS ADMINISTRATORS -->
+
+
+            <p:panel id="paneladministrators" header="#{message['administrators']}">
+                <h:form id="formadministrators">
+                    <p:dataTable id="tableadmin" var="a" value="#{client.administrators}"
+                                 selectionMode="single" selection="#{client.administratorSelected}"
+                                 rowKey="#{a.ID}">
+                        <p:ajax id="ajaxselect" event="rowSelect"
+                                update=":formadministrators:buttoneditadmin :formadministrators:butondeleteadmin"/>
+                        <p:ajax id="ajaxunselect" event="rowUnselect"
+                                update=":formadministrators:buttoneditadmin :formadministrators:butondeleteadmin"/>
+
+                        <!-- ID -->
+                        <p:column id="columnsid" width="60" sortBy="#{a.ID}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['administrator.ID']}" style="float:right"/>
+                            </f:facet>
+                            <p:outputLabel value="#{a.ID}" style="float:right"/>
+                        </p:column>
+
+                        <!-- Name -->
+                        <p:column id="columnname" sortBy="#{a.name}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['administrator.name']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{a.name}" style="float:left"/>
+                        </p:column>
+
+                        <!-- E-Mail -->
+                        <p:column id="columnemail" sortBy="#{a.email}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['administrator.email']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{a.email}" style="float:left"/>
+                        </p:column>
+
+                        <!-- Phone -->
+                        <p:column id="columnphone" sortBy="#{a.phone}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['administrator.phone']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{a.phone}" style="float:left"/>
+                        </p:column>
+
+                    </p:dataTable>
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:commandButton id="buttonaddadmin" value="#{message['administrators.add']}"
+                                         icon="ui-icon-plusthick" 
+                                         actionListener="#{client.addAdministrator()}"
+                                         onclick="PF('dialog-admin').show()"
+                                         update=":formdialogadmin"/>
+                        <p:commandButton id="buttoneditadmin" value="#{message['administrators.edit']}"
+                                         actionListener="#{client.editAdministrator()}"
+                                         onclick="PF('dialog-admin').show()"
+                                         update=":formdialogadmin"
+                                         disabled="#{empty client.administratorSelected}"
+                                         icon="ui-icon-pencil"/>
+                        <p:commandButton id="butondeleteadmin" value="#{message['administrators.delete']}"
+                                         disabled="#{empty client.administratorSelected}"
+                                         icon="ui-icon-trash"
+                                         actionListener="#{client.deleteAdministrator()}"
+                                         update=":formadministrators:tableadmin">
+                            <p:confirm header="#{message['delete']}"
+                                       message="#{message['delete.confirm']}"/>
+                        </p:commandButton>
+
+                        <ui:insert name="/template/common/confirmation.xhtml"/>
+
+                    </h:panelGrid>
+                </h:form>
+
+                <p:dialog id="dialogadmin" header="#{client.administratorID == 0 ? message['administrators.new'] : message['administrator']}" 
+                          widgetVar="dialog-admin" modal="true" resizable="false" appendTo="@(body)"
+                          closeOnEscape="true">
+                    <h:form id="formdialogadmin">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel id="labeladminname" for="inputadminname"
+                                           value="#{message['administrator.name']}"/>
+                            <p:inputText id="inputadminname" value="#{client.administratorName}"
+                                         required="true" requiredMessage="#{message['administrators.name.missing']}"
+                                         style="width: 100% !important" maxlength="70">
+                                <f:validateLength maximum="70"/>
+                            </p:inputText>
+
+                            <p:outputLabel id="labeladminemail" for="inputadminemail"
+                                           value="#{message['administrator.email']}"/>
+                            <p:inputText id="inputadminemail" value="#{client.administratorEmail}"
+                                         required="true" requiredMessage="#{message['administrators.email.missing']}"
+                                         style="width: 100% !important" maxlength="70">
+                                <f:validateLength maximum="70"/>
+                            </p:inputText>
+
+                            <p:outputLabel id="labeladminphone" value="#{message['administrator.phone']}"/>
+                            <h:panelGrid columns="4">
+                                <p:selectOneMenu id="phonetype" value="#{client.administratorPhoneType}">
+                                    <f:selectItems value="#{client.phoneTypes}"/>
+                                </p:selectOneMenu>
+
+                                <p:inputText id="inputareacode" value="#{client.administratorAreaCode}"
+                                             size="3">
+                                    <f:validateLength maximum="10"/>
+                                </p:inputText>
+                                <p:inputText id="inputnumber" value="#{client.administratorNumber}"
+                                             size="10">
+                                    <f:validateLength maximum="12"/>
+                                </p:inputText>
+                                <p:inputText id="inputbranch" value="#{client.administratorBranch}"
+                                             size="3">
+                                    <f:validateLength maximum="10"/>
+                                </p:inputText>
+
+                                <p:outputLabel id="labelphonetype" for="phonetype" 
+                                               value="#{message['phone.type']}" 
+                                               style="font-size: 50%; vertical-align:top; text-align: center"/>
+                                <p:outputLabel id="labelareacode" for="inputareacode" 
+                                               value="#{message['area.code']}" 
+                                               style="font-size: 50%; vertical-align:top; center"/>
+                                <p:outputLabel id="labelnumber" for="inputnumber" 
+                                               value="#{message['number']}" 
+                                               style="font-size: 50%; vertical-align:top; center"/>
+                                <p:outputLabel id="labelbranch" for="inputbranch" 
+                                               value="#{message['branch']}" 
+                                               style="font-size: 50%; vertical-align:top; center"/>
+                            </h:panelGrid>
+
+                            <p:commandButton id="buttonsaveadmin" value="#{message['save']}"
+                                             icon="ui-icon-disk"
+                                             actionListener="#{client.saveAdministrator()}"
+                                             onclick="PF('dialog-admin').hide()"
+                                             update=":formmenu:messages :formadministrators:tableadmin"/>
+
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+            </p:panel>
+
+            <!-- SCOPES SCOPES SCOPES SCOPES SCOPES SCOPES SCOPES SCOPES -->
+
+            <h:form id="formscopes">
+                <p:panel id="panelscopes" header="#{message['scopes']}">
+                    <p:dataTable id="tablescope" var="s" value="#{client.scopes}"
+                                 selectionMode="single" selection="#{client.scopeSelected}"
+                                 rowKey="#{s.ID}">
+                        <p:ajax id="ajaxselect" event="rowSelect"
+                                update=":formscopes:buttoneditscope :formscopes:buttondeletescope"/>
+                        <p:ajax id="ajaxunselect" event="rowUnselect"
+                                update=":formscopes:buttoneditscope :formscopes:buttondeletescope"/>
+
+                        <!-- ID -->
+                        <p:column id="columnsid" width="60" sortBy="#{s.ID}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['scope.ID']}" style="float:right"/>
+                            </f:facet>
+                            <p:outputLabel value="#{s.ID}" style="float:right"/>
+                        </p:column>
+
+                        <!-- Name -->
+                        <p:column id="columnname" sortBy="#{s.name}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['scope.name']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{s.name}" style="float:left"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:commandButton id="buttonaddscope" value="#{message['button.add.scope']}"
+                                         icon="ui-icon-plusthick" 
+                                         actionListener="#{client.addScope}"
+                                         update=":formdialogscope"
+                                         onclick="PF('scope-dialog').show();"/>
+                        <p:commandButton id="buttoneditscope" value="#{message['button.edit.scope']}"
+                                         actionListener="#{client.editScope}"
+                                         update=":formdialogscope"
+                                         onclick="PF('scope-dialog').show()"
+                                         icon="ui-icon-pencil" disabled="#{empty client.scopeSelected}"/>
+                        <p:commandButton id="buttondeletescope" value="#{message['button.delete.scope']}"
+                                         actionListener="#{client.deleteScope}"
+                                         update=":formscopes:tablescope"
+                                         icon="ui-icon-trash" disabled="#{empty client.scopeSelected}">
+                            <p:confirm header="#{message['delete']}"
+                                       message="#{message['delete.confirm']}"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+                    
+                    <ui:insert name="/template/common/confirmation.xhtml"/>
+
+                </p:panel>
+            </h:form>
+
+            <p:dialog header="#{client.scopeID == 0 ? message['new.scope'] : message['scope']}" 
+                      widgetVar="scope-dialog" modal="true" resizable="false" appendTo="@(body)" closeOnEscape="true">
+
+                <h:form id="formdialogscope">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel id="labelscopename" for="inputscopename" value="#{message['scope.name']}"/>
+                        <p:inputText id="inputscopename" value="#{client.scopeName}"
+                                     required="true" requiredMessage="#{message['scope.name.missing']}"
+                                     style="width: 100% !important" maxlength="30">
+                            <f:validateLength maximum="30"/>
+                        </p:inputText>
+
+                        <p:outputLabel id="labelscopedescription" for="inputscopedescription"
+                                       value="#{message['scope.description']}"/>
+                        <p:inputText id="inputscopedescription" value="#{client.scopeDescription}"
+                                     style="width: 100% !important" maxlength="255">
+                            <f:validateLength maximum="255"/>
+                        </p:inputText>
+
+                        <p:outputLabel id="labelmessage" for="inputmessage" 
+                                       value="#{message['scope.message']}"/>
+                        <p:inputText id="inputmessage" 
+                                     value="#{client.scopeMessage}"
+                                     required="true" requiredMessage="#{message['scope.message.missing']}"
+                                     style="width: 100% !important" maxlength="255">
+                            <f:validateLength maximum="255"/>
+                        </p:inputText>
+
+                        <p:outputLabel id="labelgrant" value="#{message['scope.grant']}"
+                                       indicateRequired="true"/>
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:selectBooleanButton id="buttonauthorizationcodegrant"
+                                                   onLabel="#{message['scope.grant.authorization.code']}"
+                                                   offLabel="#{message['scope.grant.authorization.code']}"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"
+                                                   value="#{client.scopeIsAuthorizationCode}"/>
+
+                            <p:selectBooleanButton id="buttonimplicit"
+                                                   onLabel="#{message['scope.grant.implicit']}"
+                                                   offLabel="#{message['scope.grant.implicit']}"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"
+                                                   value="#{client.scopeIsImplicit}"/>
+
+                            <p:selectBooleanButton id="buttonresourceowner"
+                                                   onLabel="#{message['scope.grant.resource.owner.password.credentials']}"
+                                                   offLabel="#{message['scope.grant.resource.owner.password.credentials']}"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"
+                                                   value="#{client.scopeIsResourceOwnerPasswordCredentials}">
+                                <p:ajax update="inputusername inputpassword"/>
+                            </p:selectBooleanButton>
+
+                            <p:selectBooleanButton id="buttonclientcredentials"
+                                                   onLabel="#{message['scope.grant.client.credentials']}"
+                                                   offLabel="#{message['scope.grant.client.credentials']}"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"
+                                                   value="#{client.scopeIsClientCredentials}"/>
+                        </h:panelGrid>
+
+                        <p:outputLabel id="labelcredential" value="#{message['scope.credentials']}"/>
+                        <h:panelGrid columns="4" cellpadding="5">
+                            <p:outputLabel id="labelusername" for="inputusername" 
+                                           value="#{message['scope.credentials.username']}"/>
+                            <p:inputText id="inputusername" value="#{client.scopeUsername}"
+                                         disabled="#{not client.scopeIsResourceOwnerPasswordCredentials}">
+                                <f:validateLength maximum="50"/>
+                            </p:inputText>
+
+                            <p:outputLabel id="labelpassword" for="inputpassword"
+                                           value="#{message['scope.credentials.password']}"/>
+                            <p:inputText id="inputpassword" value="#{client.scopePassword}"
+                                         disabled="#{not client.scopeIsResourceOwnerPasswordCredentials}">
+                                <f:validateLength maximum="255"/>
+                            </p:inputText>
+                        </h:panelGrid>
+
+
+                        <p:outputLabel id="labelexpiration" value="#{message['scope.expiration']}"/>
+                        <p:inputText id="inputexpiration" value="#{client.scopeExpiration}"/>
+
+                        <p:outputLabel id="labelprotectedresources" value="#{message['protected.resource']}"
+                                       indicateRequired="true"/>
+                        
+                        <p:selectOneListbox id="listprotectedresources" 
+                                            value="#{client.protectedResourceSelected}"
+                                            scrollHeight="100">
+                            <f:selectItems var="pr" value="#{client.protectedResources}"
+                                           itemLabel="#{pr.resource}" itemValue="#{pr}"/>
+                            <p:ajax event="change" update=":formmenu:messages :formdialogscope:buttondeletepr"/>
+                        </p:selectOneListbox>
+
+                        <p:spacer/>
+                        
+                        <h:panelGrid columns="3" cellpadding="5" style="width: 100% !important">
+                            
+                            <p:commandButton id="buttondeletepr" value="#{message['protected.resource.delete']}"
+                                             actionListener="#{client.deleteProtectedResource}"
+                                             update=":formmenu:messages :formdialogscope:listprotectedresources :formdialogscope:buttondeletepr"
+                                             disabled="#{empty client.protectedResourceSelected}"
+                                             style="float:left"/>
+                            
+                            <p:inputText id="inputaddpr" value="#{client.protectedResourceResource}"
+                                         style="width: 100% !important" maxlength="255"
+                                         pt:placeholder="/myserver/rest/information/user">
+                                <f:validateLength maximum="255"/>
+                            </p:inputText>
+                            
+                            <p:commandButton id="buttonaddpr" value="#{message['protected.resource.add']}"
+                                             actionListener="#{client.addProtectedResource}"
+                                             update=":formmenu:messages :formdialogscope:listprotectedresources :formdialogscope:inputaddpr"
+                                             style="float:right"/>
+
+                        </h:panelGrid>
+
+                        <p:commandButton id="buttonsavescope" value="#{message['save']}"
+                                         actionListener="#{client.saveScope}"
+                                         onclick="PF('scope-new').hide();"/>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
