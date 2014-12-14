@@ -5,15 +5,20 @@
     <artifactId>porcupine</artifactId>
     <version>2.0</version>
     <packaging>pom</packaging>
+    
     <modules>
-        <module>porcupine-common</module>
-    <module>authorization_server</module>
-    <module>sample-client2</module>
-  </modules>
+        <module>common</module>
+        <module>authorization_server</module>
+        <module>sample-client2</module>
+        <module>lib/resource_server</module>
+        <module>test-rs/sample-client2</module>
+        <module>test-rs/test-authorizationcode</module>
+    </modules>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <name>Porcupine 2: OAuth 2</name>
+    <name>Porcupine 2: OAuth 2 Implementation for Java EE 7</name>
 </project>
