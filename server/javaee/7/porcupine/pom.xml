@@ -6,11 +6,8 @@
     <version>2.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>common</module>
-        <module>filter</module>
+        <module>porcupine-common</module>
     <module>authorization_server</module>
-    <module>WebSecurity</module>
-    <module>sample-client</module>
     <module>sample-client2</module>
   </modules>
     <properties>
