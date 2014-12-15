@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>index</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form id="formindex">
+            <p:focus id="focus" context="panel"/>
+            <p:growl id="messages" showSummary="true"/>
+            <p:panel id="panel" header="Just an Example for OAuth Client">
+                <h:panelGrid columns="3" cellpadding="5">
+                    <p:outputLabel id="labelemail" for="inputemail" value="My E-Mail"/>
+                    <p:inputText id="inputemail" value="#{my.email}"/>
+                    <p:commandButton id="buttonRequest" value="Request" 
+                          update="messages"/>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
