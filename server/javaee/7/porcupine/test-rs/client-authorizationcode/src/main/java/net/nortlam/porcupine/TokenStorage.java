@@ -1,47 +1,37 @@
 package net.nortlam.porcupine;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+
+import net.nortlam.porcupine.common.token.AccessToken;
 
 /**
  *
  * @author Mauricio "Maltron" Leal */
-@Named("accessToken")
-@SessionScoped
-public class AccessTokenController implements Serializable {
+@Singleton
+public class TokenStorage implements Serializable {
 
-    private static final Logger LOG = Logger.getLogger(AccessTokenController.class.getName());
+    private static final Logger LOG = Logger.getLogger(TokenStorage.class.getName());
+
+    private Map<String, AccessToken> tokens;
+
+    public TokenStorage() {
+    }
     
-    private String acccessToken;
-    private String refreshToken;
-    private long expiration;
-
-    public AccessTokenController() {
+    @PostConstruct
+    private void initController() {
+        tokens = new HashMap<>();
     }
-
-    public String getAcccessToken() {
-        return acccessToken;
+    
+    public void put(String resource, AccessToken accessToken) {
+        tokens.put(resource, accessToken);
     }
-
-    public void setAcccessToken(String acccessToken) {
-        this.acccessToken = acccessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public long getExpiration() {
-        return expiration;
-    }
-
-    public void setExpiration(long expiration) {
-        this.expiration = expiration;
+    
+    public AccessToken get(String resource) {
+        return tokens.get(resource);
     }
 }

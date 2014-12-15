@@ -23,6 +23,4 @@ import javax.ws.rs.client.ClientRequestFilter;
  *
  * @author Mauricio "Maltron" Leal */
 public interface Authenticator extends ClientRequestFilter {
-    
-
 }

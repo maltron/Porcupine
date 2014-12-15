@@ -106,16 +106,16 @@ public class AuthorizeEndpoint {
             throw new UnsupportedResponseTypeException(oauth);
         }
         
-        // Redirect URI's Path
-        String path = oauth.path(oauth.getRedirectURI());
-        
-        LOG.log(Level.INFO, ">>> [SERVER] Path({0}) exist in Scope({1}) ?",
-                new Object[] {path, oauth.getScope()});
-        if(!clientService.existProtectedResourceInScope(scope, path)) {
-                oauth.setErrorMessage("### AuthorizeEndpoint.validate() Redirect URI "+
-                        " doesn't belong to that particular Scope");
-                throw new InvalidScopeException(oauth);
-        }
+//        // Redirect URI's Path
+//        String path = oauth.path(oauth.getRedirectURI());
+//        
+//        LOG.log(Level.INFO, ">>> [SERVER] Path({0}) exist in Scope({1}) ?",
+//                new Object[] {path, oauth.getScope()});
+//        if(!clientService.existProtectedResourceInScope(scope, path)) {
+//                oauth.setErrorMessage("### AuthorizeEndpoint.validate() Redirect URI "+
+//                        " doesn't belong to that particular Scope");
+//                throw new InvalidScopeException(oauth);
+//        }
         
         // Everything checks out. Generating the Message for approval
         LOG.log(Level.INFO, ">>> [SERVER] AuthorizeEndpoint.validate() "+

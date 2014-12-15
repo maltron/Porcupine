@@ -147,27 +147,36 @@ public class InitParameter implements Serializable {
     }
     
     public static Authenticator parameterAuthenticator(URI uri, ServletContext context) 
-                                                    throws AccessDeniedException {
+                                                            throws AccessDeniedException {
+        String parameterUsername = context.getInitParameter(
+                                    Porcupine.PARAMETER_AUTHENTICATOR_USERNAME);
+        if(parameterUsername == null) {
+            LOG.log(Level.WARNING, "parameterAuthenticator() "+
+                    "Porcupine.AUTHENTICATOR_USERNAME is missing");
+            return null;
+        }
+        
+        String parameterPassword = context.getInitParameter(
+                                    Porcupine.PARAMETER_AUTHENTICATOR_PASSWORD);
+        if(parameterPassword == null) {
+            LOG.log(Level.WARNING, "parameterAuthenticator() "+
+                    "Porcupine.AUTHENTICATOR_PASSWORD is missing");
+            return null;
+        }
+        
+        return parameterAuthenticator(uri, context, parameterUsername, parameterPassword);
+    }
+    
+    public static Authenticator parameterAuthenticator(URI uri, ServletContext context, 
+            String username, String password) throws AccessDeniedException {
         String parameter = context.getInitParameter(Porcupine.PARAMETER_AUTHENTICATOR);
         if(parameter == null) return null; // No Authenticator choose
         
-        String parameterUsername = context.getInitParameter(Porcupine.PARAMETER_AUTHENTICATOR_USERNAME);
-        if(parameterUsername == null) {
-            LOG.log(Level.SEVERE, "parameterAuthenticator() Porcupine.AUTHENTICATOR_USERNAME is missing");
-            return null;
-        }
-        
-        String parameterPassword = context.getInitParameter(Porcupine.PARAMETER_AUTHENTICATOR_PASSWORD);
-        if(parameterPassword == null) {
-            LOG.log(Level.SEVERE, "parameterAuthenticator() Porcupine.AUTHENTICATOR_PASSWORD is missing");
-            return null;
-        }
-        
         Authenticator authenticator = null;
         if(parameter.equals(Porcupine.AUTHENTICATOR_FORM))
-            authenticator = new FormAuthenticator(uri, parameterUsername, parameterPassword);
+            authenticator = new FormAuthenticator(uri, username, password);
         else if(parameter.equals(Porcupine.AUTHENTICATOR_BASIC))
-            authenticator = new BasicAuthenticator(parameterUsername, parameterPassword);
+            authenticator = new BasicAuthenticator(username, password);
         
         if(authenticator == null) {
             LOG.log(Level.SEVERE, "parameterAuthenticator() Porcupine.AUTHENTICATOR "+
