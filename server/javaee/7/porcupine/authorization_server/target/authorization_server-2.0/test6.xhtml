@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:composition template="/template/master.xhtml">
+
+        <ui:define name="content">
+            <h:form id="formusers">
+                <p:growl id="messages"/>
+
+                <p:panel header="Users">
+                    <p:dataTable id="datatable" var="u" value="#{users.users}"
+                                 selectionMode="single" selection="#{users.selected}" 
+                                 rowKey="#{u.ID}">
+                        <p:ajax id="ajaxselect" event="rowSelect"
+                                update=":formusers:messages :formusers:buttonedit :formusers:buttondelete"/>
+                        <p:ajax id="ajaxunselect" event="rowUnselect"
+                                update=":formusers:messages :formusers:buttonedit :formusers:buttondelete"/>
+
+                        <!-- ID -->
+                        <p:column id="columnid" width="40" sortBy="#{u.ID}">
+                            <f:facet name="header">
+                                <p:outputLabel value="ID" style="float:right"/>
+                            </f:facet>
+                            <p:outputLabel value="#{u.ID}" style="float:right"/>
+                        </p:column>
+
+                        <!-- E-Mail -->
+                        <p:column id="columnemail" sortBy="#{u.email}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['email']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{u.email}" style="float:left"/>
+                        </p:column>
+
+                        <!-- First Name -->
+                        <p:column id="columnfirstname" sortBy="#{u.firstName}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['first.name']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{u.firstName}" style="float:left"/>
+                        </p:column>
+
+                        <!-- Last Name -->
+                        <p:column id="columnlastname" sortBy="#{u.lastName}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['last.name']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{u.lastName}" style="float:left"/>
+                        </p:column>
+
+                        <!-- Phone -->
+                        <p:column id="columnphone">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['phone']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{u.phone}" style="float:left">
+                                <f:converter converterId="net.nortlam.porcupine.authorization.phone"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:commandButton id="buttonadd" value="Add"/>
+                        <p:commandButton id="buttonedit" value="Edit"
+                                         disabled="#{empty users.selected}"/>
+                        <p:commandButton id="buttondelete" value="Delete"
+                                         disabled="#{empty users.selected}"/>
+                    </h:panelGrid>
+
+                </p:panel>
+            </h:form>
+
+
+            <h:form id="formclients">
+                <p:growl id="messages"/>
+
+                <p:panel header="Clients">
+                    <p:dataTable id="datatable" var="c" value="#{clients.clients}"
+                                 selectionMode="single" selection="#{clients.selected}" 
+                                 rowKey="#{c.ID}">
+                        <p:ajax id="ajaxselect" event="rowSelect" 
+                                update=":formclients:messages :formclients:buttonedit :formclients:buttondelete"/>
+                        <p:ajax id="ajaxunselect" event="rowUnselect" 
+                                update=":formclients:messages :formclients:buttonedit :formclients:buttondelete"/>
+
+                        <!-- Name -->
+                        <p:column id="columnemail" width="170" sortBy="#{c.name}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['name']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{c.name}" style="float:left"/>
+                        </p:column>
+
+                        <!-- Description -->
+                        <p:column id="columnfirstname" sortBy="#{c.description}">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{message['description']}" style="float:left"/>
+                            </f:facet>
+                            <p:outputLabel value="#{c.description}" style="float:left"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <h:panelGrid columns="3" cellpadding="5">
+                        <p:commandButton id="buttonadd" value="Add"/>
+                        <p:commandButton id="buttonedit" value="Edit"
+                                         disabled="#{empty clients.selected}"/>
+                        <p:commandButton id="buttondelete" value="Delete"
+                                         disabled="#{empty clients.selected}"/>
+                    </h:panelGrid>
+
+                </p:panel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

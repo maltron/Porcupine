@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="/template/master.xhtml">
+    <ui:define name="navigation">
+        <p:breadCrumb>
+            <p:menuitem value="HOME" url="#" />
+            <p:menuitem value="Applications" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:layoutUnit position="west" style="border:none">
+            <p:menu>
+                <p:submenu label="User">
+                    <p:menuitem id="menuphoto" value="Photo" update=":form:messages" icon="ui-icon-disk" />
+                    <p:menuitem id="menuinfo" value="Information" update=":form:messages" icon="ui-icon-disk" />
+                    <p:menuitem id="menupass" value="Password" update=":form:messages" icon="ui-icon-arrowrefresh-1-w"/>
+                </p:submenu>
+            </p:menu>
+        </p:layoutUnit>
+
+        <p:layoutUnit position="center">
+            <p:panel id="panel" header="Information" style="border:none">
+                <h:panelGrid columns="3" cellpadding="5">
+                    <p:outputLabel id="labelone" for="inputone" value="One"/>
+                    <p:inputText id="inputone" value=""/>
+                    <p:message id="messageone" for="inputone"/>
+
+                    <p:outputLabel id="labeltwo" for="inputtwo" value="Two"/>
+                    <p:inputText id="inputtwo" value=""/>
+                    <p:message id="messagetwo" for="inputtwo"/>
+
+                    <p:outputLabel id="labelthree" for="inputthree" value="Three"/>
+                    <p:inputText id="inputthree" value=""/>
+                    <p:message id="messagethree" for="inputthree"/>
+
+                    <p:commandButton id="button"
+                                     value="Button" icon="ui-icon-key"
+                                     update=":form:messages messageone messagetwo messagethree"/>
+                </h:panelGrid>
+            </p:panel>
+        </p:layoutUnit>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:metadata>
+        <f:viewParam name="error" value="#{error.error}" required="true"
+                     requiredMessage="Missing Query Parameter: error"/>
+        <f:viewParam name="error_description" value="#{error.errorDescription}"/>
+        <f:viewParam name="error_uri" value="#{error.errorURI}"/>
+        <f:viewParam name="state" value="#{error.state}"/>
+    </f:metadata>
+    <h:head>
+        <title>Porcupine 2: Sample Client</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form id="form">
+            <p:panel id="panel" header="ERROR: #{error.error}">
+                <h:panelGrid columns="1" cellpadding="5">
+
+                    <c:if test="#{not empty error.errorDescription}">
+                        <p:outputLabel id="labeldescription" value="Description"/>
+                        <p:separator/>
+                        <p:outputLabel id="valuedescription" value="#{error.errorDescription}"/>
+                    </c:if>
+                    
+                    <c:if test="#{not empty error.oficialErrorDescription}">
+                        <p:spacer/> 
+                        <p:spacer/>
+                        <p:outputLabel id="labeloficial" value="Specification's Description"/>
+                        <p:separator/>
+                        <p:outputLabel id="oficialdescription" value="#{error.oficialErrorDescription}"/>
+                    </c:if>
+                    
+                    <c:if test="#{not empty error.errorURI}">
+                        <p:spacer/>
+                        <p:spacer/>
+                        <p:outputLabel id="erroruri" value="#{error.errorURI}"/>
+                    </c:if>
+                    
+                    
+                    <c:if test="#{not empty error.state}">
+                        <p:spacer/>
+                        <p:spacer/>
+                        <p:outputLabel id="labelstate" value="State"/>
+                        <p:separator/>
+                        <p:outputLabel id="descriptionstate" value="#{error.state}"/>
+                    </c:if>
+                    
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <!-- PORCUPINE Specifics settings for this Client -->
+    <context-param>
+        <param-name>Porcupine.SERVER_SCHEME</param-name>
+        <param-value>http</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.HOST</param-name>
+        <param-value>localhost</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.PORT</param-name>
+        <param-value>8080</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.SERVER_CONTEXT</param-name>
+        <param-value>server</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.AUTHORIZATION_ENDPOINT</param-name>
+        <param-value>oauth2/authorize</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.TOKEN_ENDPOINT</param-name>
+        <param-value>oauth2/token</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.ERROR_PAGE</param-name>
+        <param-value>http://localhost:8080/client/faces/errorpage.xhtml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.AUTHENTICATOR</param-name>
+        <param-value>Authenticator.BASIC</param-value>
+    </context-param>
+    <context-param> <!-- Trying to avoid this kind of information to be lying in here -->
+        <param-name>Porcupine.AUTHENTICATOR_USERNAME</param-name>
+        <param-value>maltron@gmail.com</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.AUTHENTICATOR_PASSWORD</param-name>
+        <param-value>maltron</param-value>
+    </context-param>
+    
+    
+    <context-param>
+        <param-name>Porcupine.CLIENT_ID</param-name>
+        <param-value>cG9yY3VwaW5lLWNsaWVudC05OTYyMWZhZC1iOWY3LTRlYzctYTM3MS05ZjU2NWUyM2I5MGU=</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.CLIENT_SECERT</param-name>
+        <param-value>cG9yY3VwaW5lLWNsaWVudC1zZWNyZXQtYjRmM2QyZmYtYmUxZS00ZjkxLWFiZWQtMjAyYWU1MTRhMDgy</param-value>
+    </context-param>
+    
+    
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>faces/index.xhtml</welcome-file>
+    </welcome-file-list>
+</web-app>
