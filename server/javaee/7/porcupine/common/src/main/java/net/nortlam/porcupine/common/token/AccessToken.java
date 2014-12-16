@@ -107,7 +107,7 @@ public class AccessToken implements Serializable {
     
     // Who in the system is actually requesting this Token
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="USER_ID", nullable = false,
+    @JoinColumn(name="USER_ID", nullable = true,
             foreignKey=@ForeignKey(name="ACCESS_TOKEN_REQUEST_BY_USER"))
     @XmlTransient
     private User principal;
@@ -241,8 +241,8 @@ public class AccessToken implements Serializable {
         if(value == null) throw new IllegalArgumentException(
                 "### parseAuthorizationBearer() Value is *NULL*");
   
-        setToken(value.substring(AUTHORIZATION_BEARER.concat(" ").length(),
-                value.length()));
+        int start = AUTHORIZATION_BEARER.concat(" ").length();
+        setToken(value.substring(start, start+LENGTH_TOKEN));
         
         return this;
     }

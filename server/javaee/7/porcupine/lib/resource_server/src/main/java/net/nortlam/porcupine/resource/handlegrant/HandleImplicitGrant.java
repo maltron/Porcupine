@@ -25,7 +25,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import net.nortlam.porcupine.resource.OAuth2ResourceOperations;
-import net.nortlam.porcupine.resource.token.ClientTokenManagement;
+import net.nortlam.porcupine.resource.token.ResourceTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.OAuth2;
@@ -40,13 +40,13 @@ public class HandleImplicitGrant extends OAuth2ResourceOperations implements Han
 
     private static final Logger LOG = Logger.getLogger(HandleImplicitGrant.class.getName());
 
-    private ClientTokenManagement tokenManagement;
+    private ResourceTokenManagement tokenManagement;
     private String scope;
     
     public HandleImplicitGrant() {
     }
     
-    public HandleImplicitGrant(ClientTokenManagement tokenManagement, String scope) {
+    public HandleImplicitGrant(ResourceTokenManagement tokenManagement, String scope) {
         this.tokenManagement = tokenManagement;
         this.scope = scope;
     }

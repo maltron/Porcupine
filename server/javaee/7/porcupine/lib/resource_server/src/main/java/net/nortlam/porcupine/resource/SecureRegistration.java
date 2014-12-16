@@ -24,12 +24,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
-import net.nortlam.porcupine.resource.handlegrant.HandleAuthorizationCodeGrant;
-import net.nortlam.porcupine.resource.handlegrant.HandleClientCredentialsGrant;
-import net.nortlam.porcupine.resource.handlegrant.HandleGrant;
-import net.nortlam.porcupine.resource.handlegrant.HandleImplicitGrant;
-import net.nortlam.porcupine.resource.handlegrant.HandleResourceOwnerPasswordCredentialsGrant;
-import net.nortlam.porcupine.resource.token.ClientTokenManagement;
+import net.nortlam.porcupine.resource.token.ResourceTokenManagement;
 
 /**
  *
@@ -43,7 +38,7 @@ public class SecureRegistration implements DynamicFeature {
     private ServletContext context;
     
     @Inject
-    private ClientTokenManagement tokenManagement;
+    private ResourceTokenManagement tokenManagement;
     
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
@@ -51,25 +46,29 @@ public class SecureRegistration implements DynamicFeature {
         Secure secure = resourceInfo.getResourceMethod().getAnnotation(Secure.class);
         if(secure == null) return;
         
-        // Try to set which Grant has been choosen
-        HandleGrant handleGrant = null;
-        switch(secure.grant()) {
-            case IMPLICIT: handleGrant = new HandleImplicitGrant(
-                                        tokenManagement, secure.scope()); break;
-            case RESOURCE_OWNER_PASSWORD_CREDENTIALS: 
-                handleGrant = new HandleResourceOwnerPasswordCredentialsGrant(
-                        tokenManagement, secure.username(), secure.password(), 
-                                                    secure.scope()); break;
-            case CLIENT_CREDENTIALS: handleGrant = new HandleClientCredentialsGrant(
-                                              tokenManagement, secure.scope()); break;
-            // DEFAULT: Authorization Code Grant
-            default: tokenManagement.setContext(context); // Setting the context
-                handleGrant = new HandleAuthorizationCodeGrant(
-                                                tokenManagement, secure.scope());
-        }
+//        // Try to set which Grant has been choosen
+//        HandleGrant handleGrant = null;
+//        switch(secure.grant()) {
+//            case IMPLICIT: handleGrant = new HandleImplicitGrant(
+//                                        tokenManagement, secure.scope()); break;
+//            case RESOURCE_OWNER_PASSWORD_CREDENTIALS: 
+//                handleGrant = new HandleResourceOwnerPasswordCredentialsGrant(
+//                        tokenManagement, secure.username(), secure.password(), 
+//                                                    secure.scope()); break;
+//            case CLIENT_CREDENTIALS: handleGrant = new HandleClientCredentialsGrant(
+//                                              tokenManagement, secure.scope()); break;
+//            // DEFAULT: Authorization Code Grant
+//            default: tokenManagement.setContext(context); // Setting the context
+//                handleGrant = new HandleAuthorizationCodeGrant(
+//                                                tokenManagement, secure.scope());
+//        }
+        
+        // Set the ServletContext 
+        tokenManagement.setContext(context);
         
         LOG.log(Level.INFO, "SecureRegistration.configure() Creating new instance of Filter");
-        PorcupineFilter filter = new PorcupineFilter(context, handleGrant);
+        PorcupineFilter filter = new PorcupineFilter(context, tokenManagement, secure);
         featureContext.register(filter);
     }
+    
 }

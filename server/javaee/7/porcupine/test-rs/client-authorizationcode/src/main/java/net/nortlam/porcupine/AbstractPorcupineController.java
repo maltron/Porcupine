@@ -18,6 +18,11 @@ package net.nortlam.porcupine;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
@@ -251,8 +256,23 @@ public abstract class AbstractPorcupineController implements Serializable {
         return InitParameter.uriTokenEndpoint(getContext());
     }
     
-    private ServletContext getContext() {
+    protected ServletContext getContext() {
         return (ServletContext)FacesContext.getCurrentInstance()
                                 .getExternalContext().getContext();
+    }
+    
+    protected String debugExpiration() {
+        return debugExpiration(null);
+    }
+    
+    protected String debugExpiration(Date expiration) {
+        SimpleDateFormat dateFormat = InitParameter.parameterDateFormat(getContext());
+        TimeZone timeZone = InitParameter.parameterTimeZone(getContext());
+        Locale locale = InitParameter.parameterLocale(getContext());
+        
+        Calendar calendar = Calendar.getInstance(timeZone, locale);
+        if(expiration != null) calendar.setTime(expiration);
+        
+        return dateFormat.format(calendar.getTime());
     }
 }

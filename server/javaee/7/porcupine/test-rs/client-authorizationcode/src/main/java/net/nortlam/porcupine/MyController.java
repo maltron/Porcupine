@@ -72,7 +72,7 @@ public class MyController extends AbstractPorcupineController implements Seriali
     
     public void setCode(String code) {
         this.authorizationCode = code;
-        LOG.log(Level.INFO, "setCode(){0}", authorizationCode);
+        LOG.log(Level.INFO, "setCode() {0}", authorizationCode);
         
         // Good, if we've got the code, we're half way there
         // Requesting an Access token then
@@ -94,13 +94,21 @@ public class MyController extends AbstractPorcupineController implements Seriali
         LOG.log(Level.INFO, "requestEmail()");
         
         // Is there any AccessToken avaliable ?
-        LOG.log(Level.INFO, "requestEmail() Is there any Acess Tokens available for:{0}", RESOURCE);
+        LOG.log(Level.INFO, "requestEmail() Is there any Access Tokens available for:{0}", RESOURCE);
         AccessToken accessToken = tokenStorage.get(RESOURCE);
         if(accessToken != null) {
-            LOG.log(Level.INFO, "requestEmail() Yes, there is. Fetch it");
-            // There is an Access Token avaliable. Fetch Resource
-            this.email = fetchResource(accessToken);
-            return;
+            LOG.log(Level.INFO, "requestEmail() NOW:{0} EXPIRATION:{1}",
+            new Object[] {debugExpiration(), debugExpiration(accessToken.getExpiration())});
+            if(!accessToken.isExpired(getContext())) {
+                LOG.log(Level.INFO, "requestEmail() Yes, there is and it still valid. Fetch it");
+                // There is an Access Token avaliable. Fetch Resource
+                this.email = fetchResource(accessToken);
+                return;
+                
+            } else {
+                LOG.log(Level.INFO, "requestEmail() Access Token is expired.");
+                // PENDING: Refreshing 
+            }
         }
         
         // No, there isn't any Access Token avaliable yet. 

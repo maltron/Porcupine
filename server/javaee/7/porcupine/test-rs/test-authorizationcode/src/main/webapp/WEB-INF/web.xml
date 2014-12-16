@@ -3,14 +3,6 @@
     <!-- PORCUPINE PORCUPINE PORCUPINE PORCUPINE -->
     <!-- Porcupine Specifics Setup Parameters    -->
     <context-param>
-        <param-name>Porcupine.CLIENT_ID</param-name>
-        <param-value>cG9yY3VwaW5lLWNsaWVudC03M2Y0ODY1OC0yZDdkLTQ3NjEtOWQwZS04NzcyM2Y1MzE4NDg=</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.CLIENT_SECRET</param-name>
-        <param-value>cG9yY3VwaW5lLWNsaWVudC1zZWNyZXQtOWJlMjIxOTctY2I1My00NGIyLTk3NzQtMDc2ZDM5M2ExNjFk</param-value>
-    </context-param>
-    <context-param>
         <param-name>Porcupine.AUTHENTICATOR</param-name>
         <param-value>Authenticator.BASIC</param-value>
     </context-param>
@@ -21,10 +13,6 @@
     <context-param>
         <param-name>Porcupine.AUTHENTICATOR_PASSWORD</param-name>
         <param-value>maltron</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.ERROR_PAGE</param-name>
-        <param-value>http://localhost:8080/client/faces/errorpage.xhtml</param-value>
     </context-param>
 
     <context-param>

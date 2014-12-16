@@ -23,7 +23,7 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import net.nortlam.porcupine.resource.OAuth2ResourceOperations;
-import net.nortlam.porcupine.resource.token.ClientTokenManagement;
+import net.nortlam.porcupine.resource.token.ResourceTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.token.AccessToken;
@@ -37,7 +37,7 @@ public class HandleResourceOwnerPasswordCredentialsGrant extends OAuth2ResourceO
 
     private static final Logger LOG = Logger.getLogger(HandleResourceOwnerPasswordCredentialsGrant.class.getName());
 
-    private ClientTokenManagement tokenManagement;
+    private ResourceTokenManagement tokenManagement;
     private String username;
     private String password;
     private String scope;
@@ -45,7 +45,7 @@ public class HandleResourceOwnerPasswordCredentialsGrant extends OAuth2ResourceO
     public HandleResourceOwnerPasswordCredentialsGrant() {
     }
 
-    public HandleResourceOwnerPasswordCredentialsGrant(ClientTokenManagement tokenManagement, 
+    public HandleResourceOwnerPasswordCredentialsGrant(ResourceTokenManagement tokenManagement, 
                                             String username, String password, String scope) {
         this.tokenManagement = tokenManagement;
         this.username = username; this.password = password;

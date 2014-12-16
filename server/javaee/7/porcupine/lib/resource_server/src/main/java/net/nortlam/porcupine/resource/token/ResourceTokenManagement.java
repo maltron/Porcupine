@@ -22,7 +22,7 @@ import net.nortlam.porcupine.common.token.AccessToken;
 /**
  *
  * @author Mauricio "Maltron" Leal */
-public interface ClientTokenManagement {
+public interface ResourceTokenManagement {
     
 //    public void store(AuthorizationCode authorizationCode) throws IOException;
 //    public AuthorizationCode retrieveAuthorizationCode(String code) throws IOException;

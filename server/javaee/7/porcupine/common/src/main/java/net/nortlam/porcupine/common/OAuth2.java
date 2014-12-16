@@ -96,6 +96,8 @@ public class OAuth2 implements Serializable {
     public static final String PARAMETER_ERROR_DESCRIPTION = "error_description";
     public static final String PARAMETER_ERROR_URI = "error_uri";
     
+    public static final String PORCUPINE_PARAMETER_GRANT = "grant";
+    
     @QueryParam(PARAMETER_RESPONSE_TYPE)
     private String query_response_type; 
     
@@ -161,6 +163,9 @@ public class OAuth2 implements Serializable {
     
     @FormParam(PARAMETER_ACCESS_TOKEN)
     private String form_access_token;
+    
+    @QueryParam(PORCUPINE_PARAMETER_GRANT)
+    private Grant query_grant;
     
     private String errorMessage;
     
@@ -589,6 +594,10 @@ public class OAuth2 implements Serializable {
     
     public String getRefreshToken() {
         return notNull(query_refresh_token, form_refresh_token);
+    }
+    
+    public Grant getGrant() {
+        return query_grant;
     }
     
     // UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL UTIL 

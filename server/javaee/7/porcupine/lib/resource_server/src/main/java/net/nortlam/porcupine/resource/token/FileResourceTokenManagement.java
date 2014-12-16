@@ -33,9 +33,9 @@ import net.nortlam.porcupine.common.token.AuthorizationCode;
  *
  * @author Mauricio "Maltron" Leal */
 @Default
-public class FileClientTokenManagement implements ClientTokenManagement {
+public class FileResourceTokenManagement implements ResourceTokenManagement {
 
-    private static final Logger LOG = Logger.getLogger(FileClientTokenManagement.class.getName());
+    private static final Logger LOG = Logger.getLogger(FileResourceTokenManagement.class.getName());
     
     public static final String FILENAME_AUTHORIZATION_CODE = "ac-";
     public static final String FILENAME_ACCESS_TOKEN = "at-";
@@ -45,7 +45,7 @@ public class FileClientTokenManagement implements ClientTokenManagement {
     
     private ServletContext context;
 
-    public FileClientTokenManagement() {
+    public FileResourceTokenManagement() {
     }
     
     @Override
@@ -190,14 +190,14 @@ public class FileClientTokenManagement implements ClientTokenManagement {
             }
         }
         
-        // Step #2/2: Storing RefreshToken (The file will be empty)
-        if(accessToken.hasRefreshToken()) {
-            java.io.File fileRefreshToken = new java.io.File(directory, 
-                        getFilenameForRefreshToken(accessToken));
-            try (FileOutputStream output = new FileOutputStream(fileRefreshToken)) {
-                // Nothing to do
-            }
-        }
+//        // Step #2/2: Storing RefreshToken (The file will be empty)
+//        if(accessToken.hasRefreshToken()) {
+//            java.io.File fileRefreshToken = new java.io.File(directory, 
+//                        getFilenameForRefreshToken(accessToken));
+//            try (FileOutputStream output = new FileOutputStream(fileRefreshToken)) {
+//                // Nothing to do
+//            }
+//        }
     }
 
     @Override

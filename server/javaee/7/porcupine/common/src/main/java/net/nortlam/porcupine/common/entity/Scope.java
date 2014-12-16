@@ -141,7 +141,7 @@ public class Scope implements Serializable {
     @XmlElement(name="Expiration", type=int.class, required=true)
     private int expiration; // Default value used for each Access Token expiration 
     
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinTable(name="PORCUPINE_CLIENT_HAS_SCOPES",
             joinColumns=@JoinColumn(name="SCOPE_ID", referencedColumnName="SCOPE_ID"),
             inverseJoinColumns=@JoinColumn(name="CLIENT_ID", referencedColumnName="CLIENT_ID"))

@@ -24,7 +24,6 @@
       <property name="hibernate.cache.use_query_cache" value="true"/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.HashtableCacheProvider"/>
       <property name="javax.persistence.sql-load-script-source" value="META-INF/loadTesting.sql"/>
-      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
 </persistence>
