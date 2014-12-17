@@ -310,11 +310,11 @@ public abstract class AbstractPorcupineController implements Serializable {
                                 .getExternalContext().getContext();
     }
     
-    protected String debugExpiration() {
-        return debugExpiration(null);
+    protected String debug() {
+        return debug(null);
     }
     
-    protected String debugExpiration(Date expiration) {
+    protected String debug(Date expiration) {
         SimpleDateFormat dateFormat = InitParameter.parameterDateFormat(getContext());
         TimeZone timeZone = InitParameter.parameterTimeZone(getContext());
         Locale locale = InitParameter.parameterLocale(getContext());

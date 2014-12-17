@@ -91,7 +91,8 @@ public abstract class AuthorizationCodeGrantController<T>
         AccessToken accessToken = tokenManagement.retrieve(resource);
         if(accessToken != null) {
             LOG.log(Level.INFO, "requestResource() There is a Token Available");
-            LOG.log(Level.INFO, "requestResource() Is this token already expired ?");
+            LOG.log(Level.INFO, "requestResource() NOW:{0} Token:{1}", 
+                    new Object[] {debug(), debug(accessToken.getExpiration())});
             if(!accessToken.isExpired(getContext())) {
                 LOG.log(Level.INFO, "requestResource() Token is still Valid."+
                         " Performing Fetch on desired Resource");
@@ -103,11 +104,15 @@ public abstract class AuthorizationCodeGrantController<T>
             } else {
                 // REFRESHING TOKEN // REFRESHING TOKEN // REFRESHING TOKEN 
                 //  // REFRESHING TOKEN // REFRESHING TOKEN // REFRESHING TOKEN 
-                LOG.log(Level.WARNING, "requestResource() Token is *EXPIRED*. Refreshing");
+                LOG.log(Level.WARNING, "requestResource() Token is *EXPIRED*."+
+                        " Deleting the old accessToken.");
+                tokenManagement.delete(resource);
+                LOG.log(Level.WARNING, "requestResource() Refreshing Tokens.");
                 accessToken = requestAccessToken(Grant.REFRESH_TOKEN, getScope(), accessToken);
                 // If something wrong happens, it will redirect to Error Page
                 if(accessToken != null) {
                     LOG.log(Level.INFO, "requestResource() Refreshing successfull.");
+                    tokenManagement.store(resource, accessToken);
                 } else {
                     LOG.log(Level.SEVERE, "requestResource() Refreshing failed");
                 }

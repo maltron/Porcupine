@@ -51,4 +51,9 @@ public class MemoryClientTokenManagement implements ClientTokenManagement {
     public AccessToken retrieve(URI resource) {
         return tokens.get(resource);
     }
+    
+    @Override
+    public void delete(URI resource) {
+        tokens.remove(resource);
+    }
 }

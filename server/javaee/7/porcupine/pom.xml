@@ -13,6 +13,7 @@
         <module>test-rs/sample-client2</module>
         <module>examples/using_authorization_code/resource_server</module>
         <module>examples/using_authorization_code/client</module>
+        <module>lib/client</module>
     </modules>
     
     <properties>

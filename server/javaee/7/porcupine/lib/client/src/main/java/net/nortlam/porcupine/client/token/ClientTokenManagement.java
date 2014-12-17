@@ -27,5 +27,5 @@ public interface ClientTokenManagement extends Serializable {
     
     public void store(URI resource, AccessToken accessToken);
     public AccessToken retrieve(URI resource);
-
+    public void delete(URI resource);
 }
