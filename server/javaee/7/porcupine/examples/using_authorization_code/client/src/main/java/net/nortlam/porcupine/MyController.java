@@ -41,6 +41,7 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     private URI uriResource;
 
     public MyController() {
+        super(String.class);
     }
 
 
@@ -101,11 +102,6 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
              .get();
     }
     
-    @Override
-    public Class<String> typeParameterClass() {
-        return String.class;
-    }
-
     @Override
     public void setSuccess(String value) {
         setEmail(value);

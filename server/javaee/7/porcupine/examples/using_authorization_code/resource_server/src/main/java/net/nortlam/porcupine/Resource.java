@@ -33,11 +33,9 @@ public class Resource implements Serializable {
 
     public Resource() {
     }
-
     
-    @GET @Secure(grant = Grant.AUTHORIZATION_CODE, scope="EMAIL")
+    @GET @Secure(grant = Grant.AUTHORIZATION_CODE, scope = "EMAIL")
     public String myEmail() {
         return "maltron@gmail.com";
     }
-
 }

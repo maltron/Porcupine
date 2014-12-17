@@ -20,11 +20,6 @@ package net.nortlam.porcupine.client;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-import net.nortlam.porcupine.client.token.ClientTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.token.AccessToken;
 
@@ -32,17 +27,17 @@ import net.nortlam.porcupine.common.token.AccessToken;
  *
  * @author Mauricio "Maltron" Leal */
 public abstract class AuthorizationCodeGrantController<T> 
-                extends AbstractPorcupineController implements FetchResource<T> {
+                extends AbstractPorcupineController<T> implements FetchResource<T> {
 
     private static final Logger LOG = Logger.getLogger(AuthorizationCodeGrantController.class.getName());
     
-    @Inject
-    protected ClientTokenManagement tokenManagement;
-    
-    private Client client;
     private String authorizationCode;
 
     public AuthorizationCodeGrantController() {
+    }
+    
+    public AuthorizationCodeGrantController(Class<T> typeParameterClass) {
+        setTypeParameterClass(typeParameterClass);
     }
 
     @Override
@@ -68,6 +63,8 @@ public abstract class AuthorizationCodeGrantController<T>
         LOG.log(Level.INFO, "setCode() Requesting a new Access Token");
         AccessToken accessToken = requestAccessToken(Grant.AUTHORIZATION_CODE, 
                                                             authorizationCode);
+        // Discard the Authorization code, if getting Access Token was sucessfull
+        if(accessToken != null) authorizationCode = null;
         
         LOG.log(Level.INFO, "setCode() Sucessfull acquired. Storing");
         tokenManagement.store(getResource(), accessToken);
@@ -161,55 +158,4 @@ public abstract class AuthorizationCodeGrantController<T>
 //        LOG.log(Level.INFO, "requestEmail() No, Redirecting to Authorization Server");
 //        redirectAuthorizationServer(Grant.AUTHORIZATION_CODE);
 //    }
-    
-    private void performFetchResource() {
-        URI resource = getResource();
-        Response response = getResponse();
-        try {
-            int code = response.getStatus();
-            T result = response.readEntity(typeParameterClass());
-            
-            this.authorizationCode = null; // No need, once the response it's OK
-            if(code == Response.Status.OK.getStatusCode()) {
-                setSuccess(result);
-            } else {
-                LOG.log(Level.SEVERE, "performFetchResource() FAILURE:{0} {1}",
-                        new Object[]{code, result});
-                setFailture(result);
-            }
-            
-        } finally {
-            if(response != null) response.close();
-            if(this.client != null) this.client.close();
-        }
-    }
-    
-    protected WebTarget getWebTarget() {
-        URI resource = getResource();
-        this.client = clientInstance(resource);
-        return this.client.target(resource);
-    }
-    
-    protected String getTokenAsBearer() {
-        URI resource = getResource();
-        AccessToken token = tokenManagement.retrieve(resource);
-        return token.toStringAuthorizationBearer();
-    }
-    
-    // FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
-    //  FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
-    @Override
-    public abstract URI getResource();
-
-    @Override
-    public abstract Class<T> typeParameterClass();
-    
-    @Override
-    public abstract Response getResponse();
-    
-    @Override
-    public abstract void setSuccess(T t);
-    
-    @Override
-    public abstract void setFailture(T t);
 }

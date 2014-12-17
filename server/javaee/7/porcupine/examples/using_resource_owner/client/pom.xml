@@ -7,12 +7,12 @@
         <version>2.0</version>
     </parent>
 
-    <groupId>net.nortlam.porcupine</groupId>
-    <artifactId>client_authorizationcode</artifactId>
+    <groupId>net.nortlam.porcupine.examples</groupId>
+    <artifactId>client</artifactId>
     <version>2.0</version>
     <packaging>war</packaging>
 
-    <name>Porcupine 2 CLIENT: Using AC</name>
+    <name>Porcupine 2 CLIENT: Using Resource Owner Password Credentials</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -36,29 +36,6 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST -->        
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>3.0.10.Final</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-            <version>3.0.10.Final</version>
-            <scope>test</scope>
-        </dependency>
-        
-        
-        
     </dependencies>
 
     <build>
@@ -110,5 +87,12 @@
             </plugin>
         </plugins>
     </build>
-
+    <repositories>
+        <repository>
+            <url>http://repository.primefaces.org/</url>
+            <id>PrimeFaces-maven-lib</id>
+            <layout>default</layout>
+            <name>Repository for library PrimeFaces-maven-lib</name>
+        </repository>
+    </repositories>
 </project>

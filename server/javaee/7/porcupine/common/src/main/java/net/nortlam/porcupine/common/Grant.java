@@ -28,7 +28,7 @@ public enum Grant {
     
     @XmlEnumValue("AuthorizationCode") AUTHORIZATION_CODE("AUTHORIZATION_CODE"),
     @XmlEnumValue("Implicit") IMPLICIT("IMPLICIT"),
-    @XmlEnumValue("ResourceOwnerPasswordCredentials") RESOURCE_OWNER_PASSWORD_CREDENTIALS("PASSWORD"),
+    @XmlEnumValue("ResourceOwnerPasswordCredentials") RESOURCE_OWNER_PASSWORD_CREDENTIALS("RESOURCE_OWNER_PASSWORD_CREDENTIALS"),
     @XmlEnumValue("ClientCredentials") CLIENT_CREDENTIALS("CLIENT_CREDENTIALS"),
     @XmlEnumValue("RefreshToken") REFRESH_TOKEN("REFRESH_TOKEN"),
     @XmlEnumValue("Extension") EXTENSION("EXTENSION");

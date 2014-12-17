@@ -10,10 +10,12 @@
         <module>common</module>
         <module>authorization_server</module>
         <module>lib/resource_server</module>
+        <module>lib/client</module>
         <module>test-rs/sample-client2</module>
         <module>examples/using_authorization_code/resource_server</module>
         <module>examples/using_authorization_code/client</module>
-        <module>lib/client</module>
+        <module>examples/using_resource_owner/client</module>
+        <module>examples/using_resource_owner/resource_server</module>
     </modules>
     
     <properties>

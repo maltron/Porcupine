@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import net.nortlam.porcupine.client.token.ClientTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.OAuth2;
@@ -48,10 +50,15 @@ import net.nortlam.porcupine.common.token.AccessToken;
  * Provides all the methods to obtain a certain resource
  *
  * @author Mauricio "Maltron" Leal */
-public abstract class AbstractPorcupineController implements Serializable {
+public abstract class AbstractPorcupineController<T> implements Serializable, FetchResource<T> {
 
     private static final Logger LOG = Logger.getLogger(AbstractPorcupineController.class.getName());
     
+    @Inject
+    protected ClientTokenManagement tokenManagement;
+    
+    private Client client;
+    private Class<T> typeParameterClass; // Needs to setup before using this Class
     private String errorValue;
     
     public AbstractPorcupineController() {
@@ -324,4 +331,65 @@ public abstract class AbstractPorcupineController implements Serializable {
         
         return dateFormat.format(calendar.getTime());
     }
+    
+    public void setTypeParameterClass(Class<T> typeParameterClass) {
+        this.typeParameterClass = typeParameterClass;
+    }
+    
+    /**
+     * Request the content from the Resource Server */
+    protected abstract void requestResource();
+
+    protected void performFetchResource() {
+        URI resource = getResource();
+        Response response = getResponse();
+        try {
+            int code = response.getStatus();
+            T result = response.readEntity(typeParameterClass());
+            
+            if(code == Response.Status.OK.getStatusCode()) {
+                setSuccess(result);
+            } else {
+                LOG.log(Level.SEVERE, "performFetchResource() FAILURE:{0} {1}",
+                        new Object[]{code, result});
+                setFailture(result);
+            }
+            
+        } finally {
+            if(response != null) response.close();
+            if(this.client != null) this.client.close();
+        }
+    }
+    
+    protected WebTarget getWebTarget() {
+        URI resource = getResource();
+        this.client = clientInstance(resource);
+        return this.client.target(resource);
+    }
+    
+    protected String getTokenAsBearer() {
+        URI resource = getResource();
+        AccessToken token = tokenManagement.retrieve(resource);
+        return token.toStringAuthorizationBearer();
+    }
+    
+    // FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
+    //  FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
+    @Override
+    public abstract URI getResource();
+
+    @Override
+    public Class<T> typeParameterClass() {
+        return typeParameterClass; 
+    }
+    
+    @Override
+    public abstract Response getResponse();
+    
+    @Override
+    public abstract void setSuccess(T t);
+    
+    @Override
+    public abstract void setFailture(T t);
+
 }
