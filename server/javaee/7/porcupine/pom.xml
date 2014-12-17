@@ -11,7 +11,8 @@
         <module>authorization_server</module>
         <module>lib/resource_server</module>
         <module>test-rs/sample-client2</module>
-        <module>test-rs/test-authorizationcode</module>
+        <module>examples/using_authorization_code/resource_server</module>
+        <module>examples/using_authorization_code/client</module>
     </modules>
     
     <properties>

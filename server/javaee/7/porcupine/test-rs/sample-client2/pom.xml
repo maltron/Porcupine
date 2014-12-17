@@ -12,7 +12,7 @@
     <version>2.0</version>
     <packaging>war</packaging>
 
-    <name>Porcupine 2: Sample App Client #2 (Annotation oriented)</name>
+    <name>Porcupine 2 RESOURCE_SERVER: Using All</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
