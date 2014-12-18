@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -241,8 +242,15 @@ public class AccessToken implements Serializable {
         if(value == null) throw new IllegalArgumentException(
                 "### parseAuthorizationBearer() Value is *NULL*");
   
-        int start = AUTHORIZATION_BEARER.concat(" ").length();
-        setToken(value.substring(start, start+LENGTH_TOKEN));
+        int bearer = value.indexOf(AUTHORIZATION_BEARER);
+        if(bearer < 0) // There isn't the Bearer indicator
+            throw new IllegalArgumentException("### parseAuthorizationBearer() "+
+                    " Unable to locate the <Bearer> indicator");
+        int start = bearer+AUTHORIZATION_BEARER.length();
+        int end = value.indexOf(",", start);
+        if(end < 0) end = value.length();
+        
+        setToken(value.substring(start, end).trim());
         
         return this;
     }

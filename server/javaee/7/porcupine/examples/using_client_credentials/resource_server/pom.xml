@@ -8,11 +8,11 @@
     </parent>
 
     <groupId>net.nortlam.porcupine.examples</groupId>
-    <artifactId>resource_server-resource_owner_password_credentials</artifactId>
+    <artifactId>resource_server-client_credentials</artifactId>
     <version>2.0</version>
     <packaging>war</packaging>
 
-    <name>Porcupine 2 RESOURCE SERVER: Using Resource Owner Password Credentials</name>
+    <name>Porcupine 2 RESOURCE SERVER: Client Credentials</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
