@@ -100,7 +100,7 @@ public class PorcupineFilter implements ContainerRequestFilter {
 
         LOG.log(Level.INFO, "filter() No Token Locally. Checking if it's valid Remotely");
         URI uriCheckPoint = uriCheckEndPoint();
-        Client client = clientInstance(context, request, uriCheckPoint);
+        Client client = clientInstance(context, request, uriCheckPoint, null, null);
         if(client == null) {
             // Something is wrong with the authentication
             redirectNotAuthorize(request); return;
@@ -192,7 +192,8 @@ public class PorcupineFilter implements ContainerRequestFilter {
      * Return an instance o JAX-RS 2 Client, using the necessary Authenticator
      * in order to obtain access to the Authorization Server */
     private Client clientInstance(ServletContext context, 
-                                    ContainerRequestContext request,  URI uri) {
+                            ContainerRequestContext request,  URI uri, 
+                                            String username, String password) {
 
         if(!InitParameter.isParameterAuthenticator(context)) 
             return ClientBuilder.newClient();
@@ -200,7 +201,8 @@ public class PorcupineFilter implements ContainerRequestFilter {
         Authenticator authenticator = null;
         try {
             // Must be either Authenticator.FORM or Authenticator.BASIC
-            authenticator = InitParameter.parameterAuthenticator(uri, context);
+            authenticator = InitParameter.parameterAuthenticator(uri, context, 
+                                                            username, password);
         } catch(AccessDeniedException ex) {
             LOG.log(Level.SEVERE, "clientInstance() Unable to Perform authentication "+
                     " on Authorization Server");
@@ -215,6 +217,4 @@ public class PorcupineFilter implements ContainerRequestFilter {
     private URI uriCheckEndPoint() {
         return InitParameter.uriCheckEndpoint(context);
     }
-    
-    
 }

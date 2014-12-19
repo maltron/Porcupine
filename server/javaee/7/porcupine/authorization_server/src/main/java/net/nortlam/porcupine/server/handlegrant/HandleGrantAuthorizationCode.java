@@ -106,7 +106,7 @@ public class HandleGrantAuthorizationCode implements HandleGrant {
             LOG.log(Level.INFO, ">>> [SERVER] generateToken() Requesting new Access Token");
 //            accessToken = newAccessCode(authorizationCode);
             AccessToken accessToken = new AccessToken(config.getContext(), 
-                    authorizationCode, config.getPrincipal());
+                    authorizationCode);
             
             // Save the Access Code for a Period of Time (Expiration)
             LOG.log(Level.INFO, ">>> [SERVER] generateToken() Storing Access Token and Deleting the AuthorizationCode");

@@ -82,7 +82,8 @@ public class OAuth2ResourceOperations implements Serializable {
      * Return an instance o JAX-RS 2 Client, using the necessary Authenticator
      * in order to obtain access to the Authorization Server */
     protected Client clientInstance(ServletContext context, 
-                                    ContainerRequestContext request,  URI uri) {
+                                    ContainerRequestContext request,  URI uri,
+                                            String username, String password) {
 
         if(!InitParameter.isParameterAuthenticator(context)) 
             return ClientBuilder.newClient();
@@ -90,7 +91,8 @@ public class OAuth2ResourceOperations implements Serializable {
         Authenticator authenticator = null;
         try {
             // Must be either Authenticator.FORM or Authenticator.BASIC
-            authenticator = InitParameter.parameterAuthenticator(uri, context);
+            authenticator = InitParameter.parameterAuthenticator(uri, context, 
+                                                            username, password);
         } catch(AccessDeniedException ex) {
             LOG.log(Level.SEVERE, "clientInstance() Unable to Perform authentication "+
                     " on Authorization Server");
@@ -177,7 +179,7 @@ public class OAuth2ResourceOperations implements Serializable {
                 new Object[] {grant, scope, username, password, authorizationCode});
         URI tokenEndpoint = InitParameter.uriTokenEndpoint(context);
         
-        Client client = clientInstance(context, request, tokenEndpoint);
+        Client client = clientInstance(context, request, tokenEndpoint, username, password);
         WebTarget targetTokenEndpoint = client.target(tokenEndpoint);
         
         Form form = new Form();

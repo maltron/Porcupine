@@ -59,7 +59,7 @@ public class TestXMLMarshalling implements Serializable {
         
         AccessToken accessToken = new AccessToken(
                 IDFactory.getInstance().newAccessToken(),"EMAIL", calendar.getTime(), 
-                IDFactory.getInstance().newRefreshToken(), "example", null, null);
+                IDFactory.getInstance().newRefreshToken(), "example", null);
         LOG.log(Level.INFO, ">>> testMarshalingAccessCode() {0}", marshaling(accessToken, AccessToken.class));
     }
     

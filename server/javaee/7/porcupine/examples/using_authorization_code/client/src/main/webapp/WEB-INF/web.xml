@@ -29,19 +29,6 @@
         <param-name>Porcupine.ERROR_PAGE</param-name>
         <param-value>http://localhost:8080/client/faces/errorpage.xhtml</param-value>
     </context-param>
-    <context-param>
-        <param-name>Porcupine.AUTHENTICATOR</param-name>
-        <param-value>Authenticator.BASIC</param-value>
-    </context-param>
-    <context-param> <!-- Trying to avoid this kind of information to be lying in here -->
-        <param-name>Porcupine.AUTHENTICATOR_USERNAME</param-name>
-        <param-value>maltron@gmail.com</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.AUTHENTICATOR_PASSWORD</param-name>
-        <param-value>maltron</param-value>
-    </context-param>
-    
     
     <context-param>
         <param-name>Porcupine.CLIENT_ID</param-name>

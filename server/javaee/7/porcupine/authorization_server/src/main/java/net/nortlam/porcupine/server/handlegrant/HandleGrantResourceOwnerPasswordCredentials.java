@@ -81,7 +81,7 @@ public class HandleGrantResourceOwnerPasswordCredentials implements HandleGrant 
             }
             
             LOG.log(Level.INFO, ">>> [SERVER] Everything checks out. Generating Access Token");
-            AccessToken accessToken = new AccessToken(config.getContext(), scope, config.getPrincipal());
+            AccessToken accessToken = new AccessToken(config.getContext(), scope);
             // No need for a refresh Token for this Grant
             accessToken.setRefreshToken(null);
             config.getTokenManagement().storeAccessToken(oauth, accessToken);

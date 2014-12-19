@@ -82,7 +82,7 @@ public class HandleGrantRefreshToken implements HandleGrant {
             // Look for the Scope 
             LOG.log(Level.INFO, ">>> [SERVER] Everything seems in order. "+
                     "Refreshing with a new Access Token (and deleting the old one)");
-            AccessToken accessToken = new AccessToken(config.getContext(), oldAccessToken, config.getPrincipal());
+            AccessToken accessToken = new AccessToken(config.getContext(), oldAccessToken);
             config.getTokenManagement().refreshingAccessToken(config.getOAuth(), oldAccessToken, accessToken);
             
             return accessToken;

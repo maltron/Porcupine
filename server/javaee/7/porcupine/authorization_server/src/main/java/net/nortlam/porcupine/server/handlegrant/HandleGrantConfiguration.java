@@ -21,7 +21,6 @@ import javax.servlet.ServletContext;
 import net.nortlam.porcupine.authorization.service.ClientService;
 import net.nortlam.porcupine.authorization.token.TokenManagement;
 import net.nortlam.porcupine.common.OAuth2;
-import net.nortlam.porcupine.common.entity.User;
 
 /**
  * All the objects needed for each Grant
@@ -33,6 +32,4 @@ public interface HandleGrantConfiguration {
     public ServletContext getContext();
     public ClientService getClientService();
     public TokenManagement getTokenManagement();
-    public User getPrincipal();
-
 }

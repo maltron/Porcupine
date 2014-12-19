@@ -146,26 +146,26 @@ public class InitParameter implements Serializable {
         return context.getInitParameter(Porcupine.PARAMETER_AUTHENTICATOR) != null;
     }
     
-    public static Authenticator parameterAuthenticator(URI uri, ServletContext context) 
-                                                            throws AccessDeniedException {
-        String parameterUsername = context.getInitParameter(
-                                    Porcupine.PARAMETER_AUTHENTICATOR_USERNAME);
-        if(parameterUsername == null) {
-            LOG.log(Level.WARNING, "parameterAuthenticator() "+
-                    "Porcupine.AUTHENTICATOR_USERNAME is missing");
-            return null;
-        }
-        
-        String parameterPassword = context.getInitParameter(
-                                    Porcupine.PARAMETER_AUTHENTICATOR_PASSWORD);
-        if(parameterPassword == null) {
-            LOG.log(Level.WARNING, "parameterAuthenticator() "+
-                    "Porcupine.AUTHENTICATOR_PASSWORD is missing");
-            return null;
-        }
-        
-        return parameterAuthenticator(uri, context, parameterUsername, parameterPassword);
-    }
+//    public static Authenticator parameterAuthenticator(URI uri, ServletContext context) 
+//                                                            throws AccessDeniedException {
+//        String parameterUsername = context.getInitParameter(
+//                                    Porcupine.PARAMETER_AUTHENTICATOR_USERNAME);
+//        if(parameterUsername == null) {
+//            LOG.log(Level.WARNING, "parameterAuthenticator() "+
+//                    "Porcupine.AUTHENTICATOR_USERNAME is missing");
+//            return null;
+//        }
+//        
+//        String parameterPassword = context.getInitParameter(
+//                                    Porcupine.PARAMETER_AUTHENTICATOR_PASSWORD);
+//        if(parameterPassword == null) {
+//            LOG.log(Level.WARNING, "parameterAuthenticator() "+
+//                    "Porcupine.AUTHENTICATOR_PASSWORD is missing");
+//            return null;
+//        }
+//        
+//        return parameterAuthenticator(uri, context, parameterUsername, parameterPassword);
+//    }
     
     public static Authenticator parameterAuthenticator(URI uri, ServletContext context, 
             String username, String password) throws AccessDeniedException {

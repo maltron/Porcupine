@@ -361,6 +361,7 @@ public abstract class AbstractPorcupineController<T>
     protected void performFetchResource() throws UnableToFetchResourceException {
         URI resource = getResource();
         Response response = getResponse();
+        
 //        // Add the Authorization Header
 //        if(response != null) response.getHeaders()
 //                .add(HttpHeaders.AUTHORIZATION, getTokenAsBearer());

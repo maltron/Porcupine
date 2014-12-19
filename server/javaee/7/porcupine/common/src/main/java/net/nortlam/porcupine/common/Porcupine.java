@@ -95,9 +95,9 @@ public class Porcupine {
     public static final String AUTHENTICATOR_FORM = "Authenticator.FORM";
     public static final String AUTHENTICATOR_BASIC = "Authenticator.BASIC";
     
-    public static final String PARAMETER_AUTHENTICATOR_USERNAME = "Porcupine.AUTHENTICATOR_USERNAME";
-    
-    public static final String PARAMETER_AUTHENTICATOR_PASSWORD = "Porcupine.AUTHENTICATOR_PASSWORD";
+//    public static final String PARAMETER_AUTHENTICATOR_USERNAME = "Porcupine.AUTHENTICATOR_USERNAME";
+//    
+//    public static final String PARAMETER_AUTHENTICATOR_PASSWORD = "Porcupine.AUTHENTICATOR_PASSWORD";
     
     public static final String PARAMETER_CLIENT_ID = "Porcupine.CLIENT_ID";
     public static final String PARAMETER_CLIENT_SECRET = "Porcupine.CLIENT_SECRET";

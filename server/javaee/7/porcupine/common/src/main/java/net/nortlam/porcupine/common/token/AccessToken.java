@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +46,6 @@ import javax.xml.bind.annotation.XmlType;
 import net.nortlam.porcupine.common.IDFactory;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.entity.Scope;
-import net.nortlam.porcupine.common.entity.User;
 
 /**
  *
@@ -106,53 +104,44 @@ public class AccessToken implements Serializable {
     @XmlTransient
     private Scope scope; // Through Scope, We do know each Protected Resources to protect
     
-    // Who in the system is actually requesting this Token
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="USER_ID", nullable = true,
-            foreignKey=@ForeignKey(name="ACCESS_TOKEN_REQUEST_BY_USER"))
-    @XmlTransient
-    private User principal;
-    
     public AccessToken() {
     }
     
-    public AccessToken(ServletContext context, AuthorizationCode code, User user) {
+    public AccessToken(ServletContext context, AuthorizationCode code) {
         this(IDFactory.getInstance().newAccessToken(), TOKEN_TYPE_BEARER, 
                 // Used Scopes to give the Expiration Timming
                 code.getScope().getExpirationTimming(context), 
                 IDFactory.getInstance().newRefreshToken(), 
-                "example", code.getScope(), user);
+                "example", code.getScope());
         // PENDING: NEED TO CHECK ABOUT THE RESOURCES PURPORSES
         // MAYBE, SOMETHING RELATED TO ProtectedResources ????
     }
     
     /**
      * Creating a new Access Token, based on a old Access Token expired */
-    public AccessToken(ServletContext context, AccessToken oldAccessToken, User user) {
+    public AccessToken(ServletContext context, AccessToken oldAccessToken) {
         this(IDFactory.getInstance().newAccessToken(), 
                 oldAccessToken.getTokenType(), 
                 oldAccessToken.getScope().getExpirationTimming(context),
                 IDFactory.getInstance().newRefreshToken(), "example", 
-                oldAccessToken.getScope(), user);
+                oldAccessToken.getScope());
     }
 
-    public AccessToken(ServletContext context, Scope scope, User user) {
+    public AccessToken(ServletContext context, Scope scope) {
         this(IDFactory.getInstance().newAccessToken(), TOKEN_TYPE_BEARER,
                 scope.getExpirationTimming(context), 
                 IDFactory.getInstance().newRefreshToken(), "example", 
-                scope, user);
+                scope);
     }
 
     public AccessToken(String token, String tokenType, Date expiration, 
-            String refreshToken, String exampleParameter, Scope scope, 
-            User principal) {
+            String refreshToken, String exampleParameter, Scope scope) {
         this.token = token;
         this.tokenType = tokenType;
         this.expiration = expiration;
         this.refreshToken = refreshToken;
         this.exampleParameter = exampleParameter;
         this.scope = scope;
-        this.principal = principal;
     }
 
     public String getToken() {
@@ -255,47 +244,6 @@ public class AccessToken implements Serializable {
         return this;
     }
     
-//    public URI uriWithFragment(String location, String state) {
-////      HTTP/1.1 302 Found
-////      Location: http://example.com/cb#
-////          access_token=2YotnFZFEjr1zCsicMWpAA&
-////          state=xyz&
-////          token_type=example&
-////          expires_in=3600        
-//        
-//        // According to specification, all the information
-//        // must be included into the fragment part
-//        
-//        String parameters = URIBuilder.buildParameters(
-//                OAuth2.PARAMETER_ACCESS_TOKEN, getToken(),
-//                OAuth2.PARAMETER_REFRESH_TOKEN, getRefreshToken(),
-//                OAuth2.PARAMETER_TOKEN_TYPE, getTokenType(),
-//                // Section 4.2.2 expires_in: The value in seconds 
-//                OAuth2.PARAMETER_EXPIRES_IN, toSeconds(getExpiration()),
-//                OAuth2.PARAMETER_STATE, state);
-//        
-//        // PENDING: Moving into URIBuilder
-//        URI uri = null; 
-//        try {
-//            URI temp = new URI(location);
-//            uri = new URI(temp.getScheme(), temp.getUserInfo(), temp.getHost(), 
-//                    temp.getPort(), temp.getPath(), temp.getQuery(), parameters);
-//        } catch(URISyntaxException ex) {
-//            LOG.log(Level.SEVERE, "toImplicitURI() URI SYNTAX EXCEPTION:{0}",
-//                    ex.getMessage());
-//        }
-//        
-//        return uri;
-//    }
-    
-    public User getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(User principal) {
-        this.principal = principal;
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;
@@ -305,7 +253,6 @@ public class AccessToken implements Serializable {
         hash = 37 * hash + Objects.hashCode(this.refreshToken);
         hash = 37 * hash + Objects.hashCode(this.exampleParameter);
         hash = 37 * hash + Objects.hashCode(this.scope);
-        hash = 37 * hash + Objects.hashCode(this.principal);
         return hash;
     }
 
@@ -336,9 +283,7 @@ public class AccessToken implements Serializable {
         if (!Objects.equals(this.scope, other.scope)) {
             return false;
         }
-        if (!Objects.equals(this.principal, other.principal)) {
-            return false;
-        }
+        
         return true;
     }
 }

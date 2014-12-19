@@ -7,12 +7,12 @@
         <version>2.0</version>
     </parent>
 
-    <groupId>net.nortlam.porcupine</groupId>
-    <artifactId>client_authorizationcode</artifactId>
+    <groupId>net.nortlam.porcupine.examples</groupId>
+    <artifactId>client-authorization_code</artifactId>
     <version>2.0</version>
     <packaging>war</packaging>
 
-    <name>Porcupine 2 CLIENT: Using AC</name>
+    <name>Porcupine 2 CLIENT: Using Authorization Code</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

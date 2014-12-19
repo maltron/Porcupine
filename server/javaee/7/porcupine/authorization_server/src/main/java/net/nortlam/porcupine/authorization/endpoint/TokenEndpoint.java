@@ -31,7 +31,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import net.nortlam.porcupine.authorization.service.ClientService;
-import net.nortlam.porcupine.authorization.service.UserService;
 import net.nortlam.porcupine.authorization.token.TokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.OAuth2;
@@ -65,9 +64,6 @@ public class TokenEndpoint implements Serializable, HandleGrantConfiguration {
     @Context
     private SecurityContext security;
     
-    @EJB
-    private UserService userService;
-    
     @EJB 
     private ClientService clientService;
     
@@ -92,14 +88,6 @@ public class TokenEndpoint implements Serializable, HandleGrantConfiguration {
                 " parameters are in place Grant:{0}", grant);
         oauth.validateTokenParametersFor(grant);
         
-        LOG.log(Level.INFO, ">>> [SERVER] Looking for Principal:{0}", security.getUserPrincipal());
-        principal = userService.findByPrincipal(security.getUserPrincipal());
-        if(principal == null) {
-            oauth.setErrorMessage("### TokenEndpoint.getToken() Unable to "+
-                    " find Principal:"+security.getUserPrincipal());
-            throw new ServerErrorException(oauth);
-        }
-
         HandleGrantFactory factory = new HandleGrantFactory(grant, this);
         HandleGrant handleGrant = factory.chooseGrant();
         AccessToken accessToken = handleGrant.generateToken();
@@ -129,10 +117,5 @@ public class TokenEndpoint implements Serializable, HandleGrantConfiguration {
     @Override
     public TokenManagement getTokenManagement() {
         return tokenManagement;
-    }
-
-    @Override
-    public User getPrincipal() {
-        return principal;
     }
 }

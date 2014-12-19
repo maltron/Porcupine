@@ -25,7 +25,6 @@
             <version>7.0</version>
             <scope>compile</scope>
         </dependency>        
-
         <!-- TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST -->        
         <dependency>
             <groupId>junit</groupId>
@@ -45,7 +44,6 @@
             <version>3.0.10.Final</version>
             <scope>test</scope>
         </dependency>
-        
-        
+
     </dependencies>
 </project>

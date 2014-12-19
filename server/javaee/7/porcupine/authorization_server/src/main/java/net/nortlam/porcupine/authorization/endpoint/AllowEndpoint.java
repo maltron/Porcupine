@@ -38,13 +38,11 @@ import javax.ws.rs.core.UriBuilder;
 import net.nortlam.porcupine.common.entity.Client;
 import net.nortlam.porcupine.common.entity.Scope;
 import net.nortlam.porcupine.authorization.service.ClientService;
-import net.nortlam.porcupine.authorization.service.UserService;
 import net.nortlam.porcupine.authorization.token.TokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.OAuth2;
 import net.nortlam.porcupine.common.entity.ProtectedResource;
-import net.nortlam.porcupine.common.entity.User;
 import net.nortlam.porcupine.common.exception.InvalidRequestException;
 import net.nortlam.porcupine.common.exception.InvalidScopeException;
 import net.nortlam.porcupine.common.exception.ServerErrorException;
@@ -72,13 +70,7 @@ public class AllowEndpoint {
     private TokenManagement tokenManagement;
     
     @EJB
-    private UserService userService;
-    
-    @EJB
     private ClientService clientService;
-    
-//    @EJB
-//    private ScopeService scopeService;
     
     @GET
     public Response validate(@BeanParam OAuth2 oauth, 
@@ -156,14 +148,7 @@ public class AllowEndpoint {
             LOG.log(Level.INFO, ">>> [SERVER] validate() Everything checks out. "+
                     "Generating a new Access Token");
             
-            User principal = userService.findByPrincipal(security.getUserPrincipal());
-            if(principal == null) {
-                oauth.setErrorMessage("### AllowEndpoint.validate() Unable to find"+
-                        " Principal on Database");
-                throw new ServerErrorException(oauth);
-            }
-            
-            AccessToken accessToken = new AccessToken(context, scope, principal);
+            AccessToken accessToken = new AccessToken(context, scope);
             
             // Construct the URI for redirect
             UriBuilder builder = UriBuilder.fromUri(oauth.getRedirectURI());

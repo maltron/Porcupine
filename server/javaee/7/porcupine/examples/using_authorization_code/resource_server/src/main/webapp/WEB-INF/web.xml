@@ -3,19 +3,6 @@
     <!-- PORCUPINE PORCUPINE PORCUPINE PORCUPINE -->
     <!-- Porcupine Specifics Setup Parameters    -->
     <context-param>
-        <param-name>Porcupine.AUTHENTICATOR</param-name>
-        <param-value>Authenticator.BASIC</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.AUTHENTICATOR_USERNAME</param-name>
-        <param-value>maltron@gmail.com</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.AUTHENTICATOR_PASSWORD</param-name>
-        <param-value>maltron</param-value>
-    </context-param>
-
-    <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
