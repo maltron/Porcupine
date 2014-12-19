@@ -44,11 +44,14 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     
     private String email; // MY GOAL 
     private URI uriResource;
+    
+    private boolean isAuthentication;
+    private String username;
+    private String password;
 
     public MyController() {
         super(String.class);
     }
-
 
     public String getEmail() { // GOAL
         return email;
@@ -57,15 +60,31 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     public void setEmail(String email) { // GOAL
         this.email = email;
     }
+    
+    public void setAuthentication(boolean isAuthentication) {
+        this.isAuthentication = isAuthentication;
+    }
+    
+    public boolean isAuthentication() {
+        return isAuthentication;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     @Override
     public String getUsername() { // In theory, one must use a login page
-        return "maltron@gmail.com";
+        return username;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
     public String getPassword() { // In theory, one must use a login page
-        return "maltron";
+        return password;
     }
 
     @Override

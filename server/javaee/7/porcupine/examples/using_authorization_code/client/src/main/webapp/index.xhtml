@@ -18,6 +18,20 @@
         <h:form id="formindex">
             <p:focus id="focus" context="panel"/>
             <p:growl id="messages" showSummary="true" showDetail="true"/>
+                <h:panelGrid columns="5" cellpadding="5">
+                    <p:selectBooleanButton id="buttonAuthentication" value="#{my.authentication}"
+                                           onLabel="Authentication" offLabel="NO AUTHENTICATION">
+                        <p:ajax update="labelUsername inputUsername labelPassword inputPassword"/>
+                    </p:selectBooleanButton>
+                    <p:outputLabel id="labelUsername" for="inputUsername" value="Username"/>
+                    <p:inputText id="inputUsername" value="#{my.username}" required="true"
+                                 disabled="#{not my.authentication}"/>
+                    
+                    <p:outputLabel id="labelPassword" for="inputPassword" value="Password"/>
+                    <p:password id="inputPassword" value="#{my.password}" required="true"
+                                                    disabled="#{not my.authentication}"/>
+                </h:panelGrid>
+            
             <p:panel id="panel" header="Requesting Email from #{my.resource}">
                 <h:panelGrid columns="4" cellpadding="5">
                     <p:commandButton id="buttonRequest" value="Request" 
