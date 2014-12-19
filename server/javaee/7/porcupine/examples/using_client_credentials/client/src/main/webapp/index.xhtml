@@ -23,9 +23,6 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
-    <f:metadata>
-        <f:viewParam name="error" value="#{my.error}"/>
-    </f:metadata>
     <h:head>
         <title>index</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -33,24 +30,18 @@
     <h:body>
         <h:form id="formindex">
             <p:focus id="focus" context="panel"/>
-            <p:growl id="messages" showSummary="true"/>
-            <p:panel id="panel" header="Header">
-                <h:panelGrid columns="3" cellpadding="5">
-                    <p:outputLabel id="labelone" for="inputone" value="One"/>
-                    <p:inputText id="inputone" value=""/>
-                    <p:message id="messageone" for="inputone"/>
+            <p:growl id="messages" showSummary="true" showDetail="true"/>
+            <p:panel id="panel" header="Person from http://localhost:8080/testcc/rest/resource">
+                <h:panelGrid columns="5" cellpadding="5">
+                    <p:commandButton id="button" actionListener="#{my.requestPerson}"
+                          value="Request" icon="ui-icon-key"
+                          update="messages inputFirstName inputLastName"/>
+
+                    <p:outputLabel id="labelFirstName" for="inputFirstName" value="First Name"/>
+                    <p:inputText id="inputFirstName" value="#{my.firstName}"/>
                     
-                    <p:outputLabel id="labeltwo" for="inputtwo" value="Two"/>
-                    <p:inputText id="inputtwo" value=""/>
-                    <p:message id="messagetwo" for="inputtwo"/>
-                    
-                    <p:outputLabel id="labelthree" for="inputthree" value="Three"/>
-                    <p:inputText id="inputthree" value=""/>
-                    <p:message id="messagethree" for="inputthree"/>
-                    
-                    <p:commandButton id="button"
-                          value="Button" icon="ui-icon-key"
-                          update="messages messageone messagetwo messagethree"/>
+                    <p:outputLabel id="labelLastName" for="inputLastName" value="Last Name"/>
+                    <p:inputText id="inputLastName" value="#{my.lastName}"/>
                 </h:panelGrid>
             </p:panel>
         </h:form>

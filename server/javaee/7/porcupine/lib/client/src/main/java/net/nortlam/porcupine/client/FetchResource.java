@@ -26,6 +26,5 @@ public interface FetchResource<T> {
     public URI getResource();
     public Response getResponse();
     public void setSuccess(T t);
-    public void setFailture(T t);
     public Class<T> typeParameterClass();
 }

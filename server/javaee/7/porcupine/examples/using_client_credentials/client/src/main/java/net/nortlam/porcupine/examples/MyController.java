@@ -22,12 +22,18 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.nortlam.porcupine.client.ClientCredentialsController;
+import net.nortlam.porcupine.client.exception.ResponseEvent;
+import net.nortlam.porcupine.client.exception.UnableToFetchResourceException;
+import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException;
 
 /**
  *
@@ -43,6 +49,7 @@ public class MyController extends ClientCredentialsController<Person> {
     private Person person; // MY GOAL
 
     public MyController() {
+        super(Person.class);
     }
     
     public void setPerson(Person person) {
@@ -65,8 +72,40 @@ public class MyController extends ClientCredentialsController<Person> {
         return person != null ? person.getLastName() : null;
     }
     
+    public void requestPerson(ActionEvent event) {
+        try {
+            requestResource();
+            
+        } catch(UnableToObtainAccessTokenException ex) {
+            ResponseEvent responseEvent = ex.getEvent();
+            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Unable to Obtain Access Token",
+            String.format("Server responded: %d %s", responseEvent.getCode(),
+                    responseEvent.getReason()));
+            FacesContext.getCurrentInstance().addMessage("messages", error);
+            
+        } catch(UnableToFetchResourceException ex) {
+            ResponseEvent responseEvent = ex.getEvent();
+            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Unable to Fetch Information on Resource Server",
+            String.format("%d %s", responseEvent.getCode(),
+                    responseEvent.getReason()));
+            FacesContext.getCurrentInstance().addMessage("messages", error);
+        }
+    }
+    
     // CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER 
     //   CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER 
+
+    @Override
+    public String getUsername() {
+        return "maltron@gmail.com";
+    }
+
+    @Override
+    public String getPassword() {
+        return "maltron";
+    }
 
     @Override
     public String getScope() {
@@ -89,22 +128,18 @@ public class MyController extends ClientCredentialsController<Person> {
         return uriResource;
     }
 
+    /**
+     * No need to add the Authorization Header. The framework it will add it
+     * automatically for you */
     @Override
-    public Response getResponse() {
+    public Response getResponse() { 
         return getWebTarget().request(MediaType.APPLICATION_XML)
-                // IMPORTANT: It won't work without it
                 .header(HttpHeaders.AUTHORIZATION, getTokenAsBearer())
-                .post(Entity.entity(Person.class, MediaType.APPLICATION_XML));
-                
+                .post(Entity.entity(Person.class, MediaType.WILDCARD_TYPE));
     }
 
     @Override
     public void setSuccess(Person person) {
         setPerson(person);
-    }
-
-    @Override
-    public void setFailture(Person person) {
-        LOG.log(Level.SEVERE, "### FAILURE:");
     }
 }

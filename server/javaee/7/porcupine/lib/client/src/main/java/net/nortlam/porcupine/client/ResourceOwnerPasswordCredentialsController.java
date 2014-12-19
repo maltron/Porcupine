@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.nortlam.porcupine.client.exception.UnableToFetchResourceException;
+import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.token.AccessToken;
 
@@ -50,7 +52,8 @@ public abstract class ResourceOwnerPasswordCredentialsController<T>
     }
 
     @Override
-    protected void requestResource() {
+    protected void requestResource() 
+            throws UnableToObtainAccessTokenException, UnableToFetchResourceException {
         LOG.log(Level.INFO, "requestResource()");
         
         URI resource = getResource();
@@ -83,11 +86,11 @@ public abstract class ResourceOwnerPasswordCredentialsController<T>
         // There isn't any Token Avaible. Redirect to Authorization Server
         LOG.log(Level.INFO, "requestResource() NO TOKENS FOUND. Requesting a new Token");
         accessToken = requestAccessToken(Grant.RESOURCE_OWNER_PASSWORD_CREDENTIALS, getScope(), null);
+        // If something goes wrong, it will generate an Exception
         LOG.log(Level.INFO, "requestResource() Token:{0}", accessToken != null ?
-                accessToken.getToken() : "NULL");
+            accessToken.getToken() : "NULL");
         tokenManagement.store(resource, accessToken);
-        // If somethgin goes wrong, it will be redirect to the error page
-        
+
         // WARNING: RECURSION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         requestResource(); // WARNING: RECURSION !!!!!!!!!!!!!!!!!!!!!!!!!
     }

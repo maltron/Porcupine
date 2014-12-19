@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.ws.rs.client.Entity;
@@ -29,6 +31,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.nortlam.porcupine.client.ResourceOwnerPasswordCredentialsController;
+import net.nortlam.porcupine.client.exception.ResponseEvent;
+import net.nortlam.porcupine.client.exception.UnableToFetchResourceException;
+import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException;
 
 /**
  * @author Mauricio "Maltron" Leal */
@@ -87,7 +92,25 @@ public class MyController extends ResourceOwnerPasswordCredentialsController<Doc
     }
     
     public void requestDocument(ActionEvent evet) {
-        requestResource();
+        try {
+            requestResource();
+            
+        } catch(UnableToObtainAccessTokenException ex) {
+            ResponseEvent responseEvent = ex.getEvent();
+            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Unable to Obtain Access Token",
+            String.format("%d %s", responseEvent.getCode(),
+                    responseEvent.getReason()));
+            FacesContext.getCurrentInstance().addMessage("messages", error);
+            
+        } catch(UnableToFetchResourceException ex) {
+            ResponseEvent responseEvent = ex.getEvent();
+            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Unable to Fetch Information on Resource Server",
+            String.format("Server responded: %d %s", responseEvent.getCode(),
+                    responseEvent.getReason()));
+            FacesContext.getCurrentInstance().addMessage("messages", error);
+        }
     }
     
     // RESOURCE SERVER RESOURCE SERVER RESOURCE SERVER RESOURCE SERVER RESOURCE SERVER 
@@ -119,10 +142,4 @@ public class MyController extends ResourceOwnerPasswordCredentialsController<Doc
     public void setSuccess(Document document) {
         setDocument(document);
     }
-
-    @Override
-    public void setFailture(Document document) {
-        LOG.log(Level.SEVERE, "### FAILURE:");
-    }
-
 }

@@ -15,32 +15,40 @@
  * limitations under the License.
  * 
  */
-package net.nortlam.porcupine.examples;
+package net.nortlam.porcupine.client.exception;
 
 import java.io.Serializable;
 import java.util.logging.Logger;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import net.nortlam.porcupine.common.Grant;
-import net.nortlam.porcupine.resource.Secure;
 
 /**
  *
  * @author Mauricio "Maltron" Leal */
-@Path("/resource")
-public class Resource implements Serializable {
+public class ResponseEvent implements Serializable {
 
-    private static final Logger LOG = Logger.getLogger(Resource.class.getName());
+    private static final Logger LOG = Logger.getLogger(ResponseEvent.class.getName());
+    
+    private int code;
+    private String reason;
+    private String body;
 
-    public Resource() {
+    public ResponseEvent() {
     }
 
-    @POST 
-    @Secure(grant=Grant.CLIENT_CREDENTIALS, scope="EMAIL")
-    @Produces(MediaType.APPLICATION_XML)
-    public Person getPerson() {
-        return new Person("Mauricio", "Leal");
+    public ResponseEvent(int code, String reason, String body) {
+        this.code = code;
+        this.reason = reason;
+        this.body = body;
+    }
+
+    public int getCode() {
+        return code;
+    }
+    
+    public String getReason() {
+        return reason;
+    }
+
+    public String getBody() {
+        return body;
     }
 }

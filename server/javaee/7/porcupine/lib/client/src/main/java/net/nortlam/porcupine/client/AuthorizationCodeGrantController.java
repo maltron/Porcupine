@@ -20,6 +20,8 @@ package net.nortlam.porcupine.client;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.nortlam.porcupine.client.exception.UnableToFetchResourceException;
+import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.token.AccessToken;
 
@@ -58,26 +60,33 @@ public abstract class AuthorizationCodeGrantController<T>
         
         LOG.log(Level.INFO, "setCode() {0}", authorizationCode);
         
-        // Good, if we've got the code, we're half way there
-        // Requesting an Access token then
-        LOG.log(Level.INFO, "setCode() Requesting a new Access Token");
-        AccessToken accessToken = requestAccessToken(Grant.AUTHORIZATION_CODE, 
-                                                            authorizationCode);
-        // Discard the Authorization code, if getting Access Token was sucessfull
-        if(accessToken != null) authorizationCode = null;
+        try {
+            // Good, if we've got the code, we're half way there
+            // Requesting an Access token then
+            LOG.log(Level.INFO, "setCode() Requesting a new Access Token");
+            AccessToken accessToken = requestAccessToken(Grant.AUTHORIZATION_CODE, 
+                                                                authorizationCode);
+            // Discard the Authorization code, if getting Access Token was sucessfull
+            authorizationCode = null;
         
-        LOG.log(Level.INFO, "setCode() Sucessfull acquired. Storing");
-        tokenManagement.store(getResource(), accessToken);
-        
-        // Requesting the Resource intented
-        requestResource();
+            LOG.log(Level.INFO, "setCode() Sucessfull acquired. Storing");
+            tokenManagement.store(getResource(), accessToken);
+
+            // Requesting the Resource intented
+            requestResource();
+        } catch(UnableToObtainAccessTokenException | UnableToFetchResourceException ex) {
+            // NOTHING TO DO
+            // In case of this grant, it will redirect to an error page
+        } 
     }
     
     public String getCode() {
         return authorizationCode;
     }
-    
-    protected void requestResource() {
+
+    @Override
+    protected void requestResource() 
+    throws UnableToObtainAccessTokenException, UnableToFetchResourceException {
         LOG.log(Level.INFO, "requestResource()");
         
         URI resource = getResource();

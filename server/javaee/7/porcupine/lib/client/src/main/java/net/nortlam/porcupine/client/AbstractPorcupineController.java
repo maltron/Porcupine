@@ -39,6 +39,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import net.nortlam.porcupine.client.exception.ResponseEvent;
+import net.nortlam.porcupine.client.exception.UnableToFetchResourceException;
+import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException;
 import net.nortlam.porcupine.client.token.ClientTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
@@ -51,7 +54,8 @@ import net.nortlam.porcupine.common.token.AccessToken;
  * Provides all the methods to obtain a certain resource
  *
  * @author Mauricio "Maltron" Leal */
-public abstract class AbstractPorcupineController<T> implements Serializable, FetchResource<T> {
+public abstract class AbstractPorcupineController<T> 
+                                    implements Serializable, FetchResource<T> {
 
     private static final Logger LOG = Logger.getLogger(AbstractPorcupineController.class.getName());
     
@@ -104,6 +108,9 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
                     // at the endpoints are not necessary
     }
     
+    /**
+     * THIS MUST CHANGE: Authentication it will be perform only on Resource Server
+     * *NOT* on Authorization Server */
     protected Client clientInstance(URI uri, String username, String password){
         Authenticator authenticator = null;
         try {
@@ -163,18 +170,20 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
         return builder.build();
     }
     
-    protected AccessToken requestAccessToken(Grant grant, String authorizationCode) {
+    protected AccessToken requestAccessToken(Grant grant, String authorizationCode) 
+                                            throws UnableToObtainAccessTokenException {
         return requestAccessToken(grant, null, null, authorizationCode, null);
     }
     
     protected AccessToken requestAccessToken(Grant grant, String scope,
-            AccessToken expiredAccessToken) {
+            AccessToken expiredAccessToken) throws UnableToObtainAccessTokenException {
         return requestAccessToken(grant, scope, expiredAccessToken, null, null);
     }
     
     protected AccessToken requestAccessToken(Grant grant, String scope, 
             AccessToken expiredAccessToken, 
-                                String authorizationCode,String redirectURI) {
+                                String authorizationCode,String redirectURI) 
+                                      throws UnableToObtainAccessTokenException {
         ServletContext context = getContext();
         
         LOG.log(Level.INFO, "requestAccessToken() Grant:{0} Scope:{1} "+
@@ -224,19 +233,26 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
         
         AccessToken accessToken = null;
         
-        Response response = null; boolean success = true;
+        Response response = null; 
         try {
             LOG.log(Level.INFO, ">>> [CLIENT] requestAccessToken() Posting....");
             response = targetTokenEndpoint.request(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_FORM_URLENCODED)
                     .post(Entity.form(form));
             
-            if(response.getStatus() == Response.Status.OK.getStatusCode()) 
+            int code = response.getStatus();
+            String body = null;
+            String reason = response.getStatusInfo().getReasonPhrase();
+            
+            if(code == Response.Status.OK.getStatusCode()) 
                 accessToken = response.readEntity(AccessToken.class);
             else {
-                success = false;
-                LOG.log(Level.SEVERE, "requestAccessToken() Response:{0}", 
-                                            response.readEntity(String.class));
+                body = response.hasEntity() ? response.readEntity(String.class) : null;
+                LOG.log(Level.SEVERE, "requestAccessToken() Response:{0}", body);
+                
+                // Generate an event
+                ResponseEvent event = new ResponseEvent(code, reason, body);
+                throw new UnableToObtainAccessTokenException(event);
             }
             
         } finally {
@@ -252,7 +268,7 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
         // If returns NULL, it must be handle it
         return accessToken;
     }
-    
+
     protected void redirectErrorPage(String error, String errorDescription) {
         redirectErrorPage(error, errorDescription, null, null);
     }
@@ -339,24 +355,28 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
     
     /**
      * Request the content from the Resource Server */
-    protected abstract void requestResource();
+    protected abstract void requestResource() 
+            throws UnableToObtainAccessTokenException, UnableToFetchResourceException;
 
-    protected void performFetchResource() {
+    protected void performFetchResource() throws UnableToFetchResourceException {
         URI resource = getResource();
         Response response = getResponse();
-        // Add the Authorization Header
-        if(response != null) response.getHeaders()
-                .add(HttpHeaders.AUTHORIZATION, getTokenAsBearer());
+//        // Add the Authorization Header
+//        if(response != null) response.getHeaders()
+//                .add(HttpHeaders.AUTHORIZATION, getTokenAsBearer());
         try {
             int code = response.getStatus();
+            String reason = response.getStatusInfo().getReasonPhrase();
             T result = response.readEntity(typeParameterClass());
             
             if(code == Response.Status.OK.getStatusCode()) {
                 setSuccess(result);
             } else {
-                LOG.log(Level.SEVERE, "performFetchResource() FAILURE:{0} {1}",
-                        new Object[]{code, result});
-                setFailture(result);
+                // Generate an Event with some information regarding
+                // the problem
+                ResponseEvent event = new ResponseEvent(code, reason, 
+                                    result != null ? result.toString() : null);
+                throw new UnableToFetchResourceException(event);
             }
             
         } finally {
@@ -392,8 +412,4 @@ public abstract class AbstractPorcupineController<T> implements Serializable, Fe
     
     @Override
     public abstract void setSuccess(T t);
-    
-    @Override
-    public abstract void setFailture(T t);
-
 }
