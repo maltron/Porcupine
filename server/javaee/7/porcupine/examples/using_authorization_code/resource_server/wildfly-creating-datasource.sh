@@ -1,0 +1,1 @@
+/subsystem=datasources/data-source=ResourceServerDS:add(driver-name=MYSQL, connection-url=jdbc:mysql://localhost:8080/RESOURCE_SERVER, user-name=mauricio, password=maltron, jndi-name=java:/jboss/datasources/ResourceServerDS)

@@ -23,4 +23,33 @@
     <welcome-file-list>
         <welcome-file>faces/index.xhtml</welcome-file>
     </welcome-file-list>
+    <security-constraint>
+        <display-name>Protecting the Resource</display-name>
+        <web-resource-collection>
+            <web-resource-name>Resource</web-resource-name>
+            <description>A simple example of a REST Resource</description>
+            <url-pattern>/rest/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>admin</role-name>
+            <role-name>user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <description/>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ResourceServerRealm</realm-name>
+    </login-config>
+    <security-role>
+        <description>Regular user to get access to the system</description>
+        <role-name>user</role-name>
+    </security-role>
+    <security-role>
+        <description>Administrative Privileges</description>
+        <role-name>admin</role-name>
+    </security-role>
 </web-app>

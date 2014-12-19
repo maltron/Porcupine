@@ -1,0 +1,13 @@
+                <security-domain name="ResourceServerRealm" cache-type="default">
+                    <authentication>
+                        <login-module code="Database" flag="required">
+                            <module-option name="dsJndiName" value="java:jboss/datasources/ResourceServerDS"/>
+                            <module-option name="principalsQuery" value="select PASSWORD from RS_USER where EMAIL=?"/>
+                            <module-option name="rolesQuery" value="select role.ROLENAME, 'Roles' from RS_ROLE role inner join RS_USER user on user.ROLE_ID = role.ROLE_ID where user.EMAIL=?"/>
+                            <module-option name="hashAlgorithm" value="SHA-256"/>
+                            <module-option name="hashEncoding" value="base64"/>
+                            <module-option name="unauthenticatedIdentity" value="guest"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
+
