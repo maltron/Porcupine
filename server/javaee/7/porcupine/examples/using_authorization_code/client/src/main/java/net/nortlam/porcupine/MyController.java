@@ -17,11 +17,10 @@ package net.nortlam.porcupine;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
@@ -36,7 +35,7 @@ import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException
  *
  * @author Mauricio "Maltron" Leal */
 @Named("my")
-@RequestScoped
+@ViewScoped
 public class MyController extends AuthorizationCodeGrantController<String> implements Serializable {
 
     private static final String RESOURCE = "http://localhost:8080/testac/rest/resource";
@@ -50,7 +49,7 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     private String password;
 
     public MyController() {
-        super(String.class);
+        super(String.class, RESOURCE);
     }
 
     public String getEmail() { // GOAL
@@ -63,6 +62,11 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     
     public void setAuthentication(boolean isAuthentication) {
         this.isAuthentication = isAuthentication;
+        // Clear if Authentication is empty
+        if(!isAuthentication) {
+            this.username = null;
+            this.password = null;
+        }
     }
     
     public boolean isAuthentication() {
@@ -89,7 +93,7 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
 
     @Override
     public String getScope() {
-        return "EMAIL";
+        return "SCOPE_AC";
     }
 
     @Override
@@ -98,7 +102,8 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     }
     
     public void requestEmail(ActionEvent event) {
-        LOG.log(Level.INFO, "requestEmail()");
+        LOG.log(Level.INFO, "requestEmail() Username:{0} Password:{1}",
+                new Object[] {getUsername(), getPassword()});
         FacesContext context = FacesContext.getCurrentInstance();
         FacesMessage message = null;
         
@@ -128,19 +133,6 @@ public class MyController extends AuthorizationCodeGrantController<String> imple
     // FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
     //   FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
 
-    @Override
-    public URI getResource() {
-        if(uriResource != null) return uriResource;
-        
-        try {
-            uriResource = new URI(RESOURCE);
-        } catch(URISyntaxException ex) {
-            LOG.log(Level.SEVERE, "URI SYNTAX EXCEPTION:{0}", ex.getMessage());
-        }
-        
-        return uriResource;
-    }
-    
     @Override
     public Response getResponse() {
         return getWebTarget().request()

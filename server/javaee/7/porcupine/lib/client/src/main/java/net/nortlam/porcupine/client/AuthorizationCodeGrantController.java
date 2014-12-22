@@ -38,8 +38,9 @@ public abstract class AuthorizationCodeGrantController<T>
     public AuthorizationCodeGrantController() {
     }
     
-    public AuthorizationCodeGrantController(Class<T> typeParameterClass) {
+    public AuthorizationCodeGrantController(Class<T> typeParameterClass, String resource) {
         setTypeParameterClass(typeParameterClass);
+        setResource(resource);
     }
 
     @Override

@@ -18,6 +18,7 @@ package net.nortlam.porcupine.client;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,7 +36,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -47,6 +47,7 @@ import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.OAuth2;
 import net.nortlam.porcupine.common.authenticator.Authenticator;
+import net.nortlam.porcupine.common.authenticator.BasicAuthenticator;
 import net.nortlam.porcupine.common.exception.AccessDeniedException;
 import net.nortlam.porcupine.common.token.AccessToken;
 
@@ -64,6 +65,7 @@ public abstract class AbstractPorcupineController<T>
     
     private Client client;
     private Class<T> typeParameterClass; // Needs to setup before using this Class
+    private URI uriResource;
     private String errorValue;
     
     public AbstractPorcupineController() {
@@ -103,31 +105,28 @@ public abstract class AbstractPorcupineController<T>
         return errorValue;  // Not really used
     }
     
-    protected Client clientInstance(URI uri) {
-        return clientInstance(uri, null, null); // Assuming no Authentication
+    protected Client clientInstance() {
+        return clientInstance(getUsername(), getPassword()); // Assuming no Authentication
                     // at the endpoints are not necessary
     }
     
     /**
      * THIS MUST CHANGE: Authentication it will be perform only on Resource Server
-     * *NOT* on Authorization Server */
-    protected Client clientInstance(URI uri, String username, String password){
-        Authenticator authenticator = null;
-        try {
-            authenticator = InitParameter.parameterAuthenticator(uri, 
-                                                    getContext(), username, password);
-        } catch(AccessDeniedException ex) {
-            LOG.log(Level.SEVERE, "clientInstance() Unable to authenticate into"+
-                    " AuthorizationServer. AccessDeniedException:{0}", ex.getMessage());
+     * *NOT* on Authorization Server 
+     * 
+     * So far, only the BASIC Authentication it's provided and it's activate
+     * if username and password are provided
+     */
+    protected Client clientInstance(String username, String password){
+        if(username != null && password != null) {
+            LOG.log(Level.INFO, "clientInstance() Username:{0} Password:{1}",
+                    new Object[] {username, password});
+            return ClientBuilder.newClient().register(new BasicAuthenticator(username, password));
         }
         
-        Client client = null;
-        if(authenticator != null) 
-            client = ClientBuilder.newClient().register(authenticator);
-        else client = ClientBuilder.newClient();
-        
-        
-        return client;
+        // No Authenticator needed
+        LOG.log(Level.INFO, "clientInstance() NO Username, NO Password proivided");
+        return ClientBuilder.newClient();
     }
     
     protected void redirectAuthorizationServer(Grant grant) {
@@ -192,7 +191,8 @@ public abstract class AbstractPorcupineController<T>
                                                  authorizationCode, redirectURI});
         URI tokenEndpoint = InitParameter.uriTokenEndpoint(context);
         
-        Client client = clientInstance(tokenEndpoint, getUsername(), getPassword());
+        // No authentication it will be used against the Authorization Server
+        Client client = clientInstance(null, null);
         WebTarget targetTokenEndpoint = client.target(tokenEndpoint);
         
         Form form = new Form();
@@ -362,12 +362,15 @@ public abstract class AbstractPorcupineController<T>
         URI resource = getResource();
         Response response = getResponse();
         
-//        // Add the Authorization Header
-//        if(response != null) response.getHeaders()
-//                .add(HttpHeaders.AUTHORIZATION, getTokenAsBearer());
         try {
             int code = response.getStatus();
             String reason = response.getStatusInfo().getReasonPhrase();
+
+            // It's easy to forget to implement that
+            if(typeParameterClass() == null) 
+            throw new UnableToFetchResourceException(
+                    new ResponseEvent(-1, "performFetchResource(): typeParameterClass()"+
+                            " is NULL. Be sure to implemented.", null));
             T result = response.readEntity(typeParameterClass());
             
             if(code == Response.Status.OK.getStatusCode()) {
@@ -388,7 +391,7 @@ public abstract class AbstractPorcupineController<T>
     
     protected WebTarget getWebTarget() {
         URI resource = getResource();
-        this.client = clientInstance(resource);
+        this.client = clientInstance(); // Username and Password will activate the authentication
         return this.client.target(resource);
     }
     
@@ -398,10 +401,21 @@ public abstract class AbstractPorcupineController<T>
         return token.toStringAuthorizationBearer();
     }
     
+    protected void setResource(String resource) {
+        try {
+            uriResource = new URI(resource);
+        } catch(URISyntaxException ex) {
+            LOG.log(Level.SEVERE, "setResource() URI SYNTAX EXCEPTION:{0}",
+                                                            ex.getMessage());
+        }
+    }
+    
     // FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
     //  FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 
     @Override
-    public abstract URI getResource();
+    public URI getResource() {
+        return uriResource;
+    }
 
     @Override
     public Class<T> typeParameterClass() {
