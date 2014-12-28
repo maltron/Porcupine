@@ -43,7 +43,7 @@ import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException
 public class MyController extends ClientCredentialsController<Person> {
 
     private static final Logger LOG = Logger.getLogger(MyController.class.getName());
-    private static final String RESOURCE = "http://localhost:8080/testcc/rest/resource";
+    private static final String RESOURCE = "https://localhost:8443/testcc/rest/resource";
     
     private URI uriResource;
     private Person person; // MY GOAL
@@ -97,19 +97,19 @@ public class MyController extends ClientCredentialsController<Person> {
     // CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER 
     //   CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER CLIENT CREDENTIALS CONTROLLER 
 
-    @Override
-    public String getUsername() {
-        return "maltron@gmail.com";
-    }
-
-    @Override
-    public String getPassword() {
-        return "maltron";
-    }
+//    @Override
+//    public String getUsername() {
+//        return "maltron@gmail.com";
+//    }
+//
+//    @Override
+//    public String getPassword() {
+//        return "maltron";
+//    }
 
     @Override
     public String getScope() {
-        return "EMAIL";
+        return "REAL_NAME";
     }
     
     // FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE FETCH RESOURCE 

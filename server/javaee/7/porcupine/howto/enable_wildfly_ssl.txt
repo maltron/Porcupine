@@ -1,0 +1,122 @@
+Enabling SSL on WildFly and generating a client KeyStore
+
+Because Porcupine has some Client JAX-RS code, which requires to talk to a SSL Server side, a Client keystore (and truststore) must be generated in order to make the communication possible. 
+We're going to use one of this keystore to enable SSL on WildFly 8.0. Most of the information described on this HOW-TO, it was based on this document:
+
+https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/Security_Guide/index.html#Using_2-way_SSL_for_the_Management_interface_and_the_CLI
+
+Step #1: Generate the stores
+
+(a): Generaring the keystore for the WildFly Application Server
+keytool -genkeypair -alias server -keyalg RSA -keysize 1024 -validity 365 -keystore server.keystore.jks -keypass server -storepass server -dname "cn=localhost"
+NOTE: It's important that both "-keypass" and "-storepass" have the same password, or it won't work at all.
+
+(b) Generating the keystore for the Client
+keytool -genkeypair -alias client -keyalg RSA -keysize 1024 -validity 365 -keystore client.keystore.jks -keypass client -storepass client -dname "cn=localhost"
+
+Step #2: Export the certificates
+
+(c) Exporting a server certificate file, based on server keystore
+keytool -exportcert -keystore server.keystore.jks -alias server -keypass server -storepass server -file server.cer
+
+(d) Exporting a client certificate file, based on client keystore
+keytool -exportcert -keystore client.keystore.jks -alias client -keypass client -storepass client -file client.cer
+
+Step #3: Import the certificates into the opposing trust stores:
+
+(e) Importing the client certificate into server truststore
+keytool -importcert -keystore server.truststore.jks -storepass client -keypass client -alias client -trustcacerts -file client.cer
+
+(f) Importing the server certificate into client truststore
+keytool -importcert -keystore client.truststore.jks -storepass server -keypass server -alias server -trustcacerts -file server.cer
+
+Step #4: Copy both keystores and truststores, to config directory on WildFly
+
+cp server.*store.jks /path/to/wildfly/standalone/configuration
+cp client.*store.jks /path/to/wildfly/standalone/configuration
+
+Step #5: Define a CertificateRealm in the configuration for your installation (standalone.xml) and point the interface to it:
+
+(g) This can be done my manually editing the configuration file by using the following commands
+/core-service=management/security-realm=PorcupineSecurityRealm:add()
+/core-service=management/security-realm=PorcupineSecurityRealm/server-identity=ssl:add(keystore-path=server.keystore.jks, keystore-relative-to=jboss.server.config.dir, keystore-password=server, alias=server)
+/core-service=management/security-realm=PorcupineSecurityRealm/authentication=truststore:add(keystore-path=server.truststore.jks, keystore-relative-to=jboss.server.config.dir, keystore-password=client)
+
+(h) Add a Listener to WildFly's Undertow to handle SSL
+/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=PorcupineSecurityRealm)
+
+Step #6: Modify jboss-cli.xml, so it can be able to access WildFly configuration server
+
+(i) Modify the default protocol, so start using only SSL 
+
+    <default-protocol use-legacy-override="true">https-remoting</default-protocol>
+
+    <!-- The default controller to connect to when 'connect' command is executed w/o arguments -->
+    <default-controller>
+        <protocol>https-remoting</protocol>
+        <host>localhost</host>
+        <port>9993</port>
+    </default-controller>
+
+PROTECTING WILDFLY MANAGEMENT INTERFACE
+
+We might also wanted to add some security into WildFly's Console, by enabling SSL into the Administration Console. The steps are very similar (with some degree of simplification) to those steps above:
+
+Step #1: Generating a KeyStore 
+keytool -genkey -alias wildfly-management -keyalg RSA -keysize 2048 -validity 7300 -keystore wildfly-management.keystore.jks -storepass wildfly -keypass wildfly
+
+NOTE #1: It's important that both "-storepass" and "-keypass" has the same value.
+NOTE #2: Without the "-dname" option, it's going to ask you about some information regarding the KeyStore
+
+Step #2: Add an SSL entry into ManagementRealm Security Domain (using jboss-cli.sh)
+/core-service=management/security-realm=ManagementRealm/server-identity=ssl:add(keystore-path=wildfly-management.keystore.jks, keystore-relative-to=jboss.server.config.dir, keystore-password=wildfly, alias=wildfly-management)
+
+Step #3: Modify WildFly's Management Interface to only work with SSL:
+/core-service=management/management-interface=http-interface:undefine-attribute(name=socket-binding)
+/core-service=management/management-interface=http-interface:write-attribute(name=secure-socket-binding,value=management-https)
+
+Step #4: There are two ways now to use jboss-cli.sh.
+
+(a) Option a: type jboss-cli.sh and modifing manually, in order to connect using SSL:
+
+You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.
+[disconnected /] connect https-remoting://localhost:9993
+Unable to connect due to unrecognised server certificate
+Subject    - CN=Mauricio \"Maltron\" Leal,OU=Software Development,O=Nortlam Networks,L=Sao Paulo,ST=SP,C=BR
+Issuer     - CN="Mauricio \"Maltron\" Leal", OU=Software Development, O=Nortlam Networks, L=Sao Paulo, ST=SP, C=BR
+Valid From - Sat Dec 27 21:00:14 BRST 2014
+Valid To   - Fri Dec 22 21:00:14 BRST 2034
+MD5 : c7:6d:88:d4:b7:8d:e8:97:76:e3:fd:7c:46:e0:b9:0c
+SHA1 : a4:c4:ee:04:2a:84:11:20:e4:13:5a:48:e1:f5:56:11:2f:ed:df:be
+
+Accept certificate? [N]o, [T]emporarily, [P]ermenantly : P
+
+(b) Option b: You can modify jboss-cli.xml to always accept https-remoting by modifying to following:
+
+<default-protocol use-legacy-override="true">http-remoting</default-protocol>
+
+<!-- The default controller to connect to when 'connect' command is executed w/o arguments -->
+<default-controller>
+    <protocol>http-remoting</protocol>
+    <host>localhost</host>
+    <port>9990</port>
+</default-controller>
+
+....and changing into:
+
+<default-protocol use-legacy-override="true">https-remoting</default-protocol>
+
+<!-- The default controller to connect to when 'connect' command is executed w/o arguments -->
+<default-controller>
+    <protocol>https-remoting</protocol>
+    <host>localhost</host>
+    <port>9993</port>
+</default-controller>
+
+
+DEFINING WILDFLY's UNIQUE NODE's NAME
+
+/subsystem=transactions:write-attribute(name=node-identifier, value=porcupine-node)
+
+
+

@@ -68,26 +68,26 @@ public class Porcupine {
     public static final String PARAMETER_ACCESS_TOKEN_EXPIRATION = "Porcupine.ACCESS_TOKEN_EXPIRATION";
     public static final int DEFAULT_ACCESS_TOKEN_EXPIRATION = 1000*60*5; // 5 minutes
     
-    public static final String PARAMETER_SERVER_SCHEME = "Porcupine.SERVER_SCHEME";
-    public static final String DEFAULT_SERVER_SCHEME = "http";
-    
-    public static final String PARAMETER_HOST = "Porcupine.HOST";
-    public static final String DEFAULT_HOST = "localhost";
-    
-    public static final String PARAMETER_PORT = "Porcupine.PORT";
-    public static final int DEFAULT_PORT = 8080;
-    
-    public static final String PARAMETER_SERVER_CONTEXT = "Porcupine.SERVER_CONTEXT";
-    public static final String DEFAULT_SERVER_CONTEXT = "server";
+//    public static final String PARAMETER_SERVER_SCHEME = "Porcupine.SERVER_SCHEME";
+//    public static final String DEFAULT_SERVER_SCHEME = "http";
+//    
+//    public static final String PARAMETER_HOST = "Porcupine.HOST";
+//    public static final String DEFAULT_HOST = "localhost";
+//    
+//    public static final String PARAMETER_PORT = "Porcupine.PORT";
+//    public static final int DEFAULT_PORT = 8080;
+//    
+//    public static final String PARAMETER_SERVER_CONTEXT = "Porcupine.SERVER_CONTEXT";
+//    public static final String DEFAULT_SERVER_CONTEXT = "server";
     
     public static final String PARAMETER_AUTHORIZATION_ENDPOINT = "Porcupine.AUTHORIZATION_ENDPOINT";
-    public static final String DEFAULT_AUTHORIZATION_ENDPOINT = "oauth2/authorize";
+    public static final String DEFAULT_AUTHORIZATION_ENDPOINT = "https://localhost:8443/server/oauth2/authorize";
     
     public static final String PARAMETER_TOKEN_ENDPOINT = "Porcupine.TOKEN_ENDPOINT";
-    public static final String DEFAULT_TOKEN_ENDPOINT = "oauth2/token";
+    public static final String DEFAULT_TOKEN_ENDPOINT = "https://localhost:8443/server/oauth2/token";
 
     public static final String PARAMETER_CHECK_ENDPOINT = "Porcupine.CHECK_ENDPOINT";
-    public static final String DEFAULT_CHECK_ENDPOINT = "oauth2/check";
+    public static final String DEFAULT_CHECK_ENDPOINT = "https://localhost:8443/server/oauth2/check";
     
     public static final String PARAMETER_ERROR_PAGE = "Porcupine.ERROR_PAGE";
     
@@ -101,7 +101,22 @@ public class Porcupine {
     
     public static final String PARAMETER_CLIENT_ID = "Porcupine.CLIENT_ID";
     public static final String PARAMETER_CLIENT_SECRET = "Porcupine.CLIENT_SECRET";
-
+    
     // Only used for Authorization Code Grant type
     public static final String PARAMETER_STORAGE_TOKENS = "Porcupine.STORAGE_TOKENS";
+    
+    // Used for Development use only 
+    public static final String PARAMETER_SSL_IGNORE_CERTIFICATE = "Porcupine.IGNORE_SSL_CERTIFICATE";
+
+    // Client KeyStore's File used in SSL Connections
+    public static final String PARAMETER_SSL_CLIENT_KEYSTORE_FILE = "Porcupine.SSL_CLIENT_KEYSTORE_FILE";
+    
+    // Client KeyStore's Password used in SSL Connections
+    public static final String PARAMETER_SSL_CLIENT_KEYSTORE_PASSWORD = "Porcupine.SSL_CLIENT_KEYSTORE_PASSWORD";
+    
+    // Client TrustStore's File used in SSL Connections
+    public static final String PARAMETER_SSL_CLIENT_TRUSTSTORE_FILE = "Porcupine.SSL_CLIENT_TRUSTSTORE_FILE";
+    
+    // Client TrustStore's Password used in SSL Connections
+    public static final String PARAMETER_SSL_CLIENT_TRUSTSTORE_PASSWORD = "Porcupine.SSL_CLIENT_TRUSTSTORE_PASSWORD";
 }

@@ -1,5 +1,4 @@
-/*
- * 
+/**
  * Copyright 2014 Mauricio "Maltron" Leal <maltron@gmail.com>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,34 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
  */
-package net.nortlam.porcupine.examples;
+package net.nortlam.porcupine.common.ssl;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import net.nortlam.porcupine.common.Grant;
-import net.nortlam.porcupine.resource.Secure;
+import javax.net.ssl.SSLContext;
 
 /**
  *
  * @author Mauricio "Maltron" Leal */
-@Path("/resource")
-public class Resource implements Serializable {
-
-    private static final Logger LOG = Logger.getLogger(Resource.class.getName());
-
-    public Resource() {
-    }
-
-    @POST 
-    @Secure(grant=Grant.CLIENT_CREDENTIALS, scope="REAL_NAME")
-    @Produces(MediaType.APPLICATION_XML)
-    public Person getPerson() {
-        return new Person("Mauricio", "Leal");
-    }
+public interface SSL extends Serializable {
+    
+    public static final String DEFAULT_SECURITY_PROTOCOL = "TLS";
+    
+    public SSL securityProtocol(String securityProtocol);
+    
+    public SSL keyStoreType(String keyStoreType);
+    public SSL keyStoreFile(String keyStoreFile);
+    public SSL keyStorePassword(String keyStorePassword);
+    
+    public SSL trustStoreType(String trustStoreType);
+    public SSL trustStoreFile(String trustStoreFile);
+    public SSL trustStorePassword(String trustStorePassword);
+    
+    public SSLContext createContext();
 }

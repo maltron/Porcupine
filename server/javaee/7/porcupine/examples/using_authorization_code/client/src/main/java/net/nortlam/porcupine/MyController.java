@@ -38,7 +38,7 @@ import net.nortlam.porcupine.client.exception.UnableToObtainAccessTokenException
 @ViewScoped
 public class MyController extends AuthorizationCodeGrantController<String> implements Serializable {
 
-    private static final String RESOURCE = "http://localhost:8080/testac/rest/resource";
+    private static final String RESOURCE = "https://localhost:8443/testac/rest/resource";
     private static final Logger LOG = Logger.getLogger(MyController.class.getName());
     
     private String email; // MY GOAL 

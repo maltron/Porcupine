@@ -43,7 +43,7 @@ public class MyController extends ResourceOwnerPasswordCredentialsController<Doc
 
     private static final Logger LOG = Logger.getLogger(MyController.class.getName());
     
-    private static final String RESOURCE = "http://localhost:8080/testropc/rest/resource";
+    private static final String RESOURCE = "https://localhost:8443/testropc/rest/resource";
     private URI uriResource;
     
     private Document document;
@@ -78,12 +78,12 @@ public class MyController extends ResourceOwnerPasswordCredentialsController<Doc
 
     @Override
     public String getUsername() {
-        return "maltron@gmail.com";
+        return "hello@hello.com";
     }
 
     @Override
     public String getPassword() {
-        return "maltron";
+        return "123";
     }
 
     @Override

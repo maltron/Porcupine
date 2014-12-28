@@ -18,17 +18,21 @@ package net.nortlam.porcupine.common;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLContext;
 import javax.servlet.ServletContext;
 import net.nortlam.porcupine.common.authenticator.Authenticator;
 import net.nortlam.porcupine.common.authenticator.BasicAuthenticator;
 import net.nortlam.porcupine.common.authenticator.FormAuthenticator;
 import net.nortlam.porcupine.common.exception.AccessDeniedException;
-import net.nortlam.porcupine.common.util.URIBuilder;
+import net.nortlam.porcupine.common.ssl.SSL;
+import net.nortlam.porcupine.common.ssl.SSLExchangeCertificate;
+import net.nortlam.porcupine.common.ssl.SSLIgnoreCertificate;
 
 /**
  *
@@ -76,25 +80,25 @@ public class InitParameter implements Serializable {
         return parameter != null ? Integer.parseInt(parameter) : Porcupine.DEFAULT_ACCESS_TOKEN_EXPIRATION;
     }
     
-    public static String parameterServerScheme(ServletContext context) {
-        String parameter = context.getInitParameter(Porcupine.PARAMETER_SERVER_SCHEME);
-        return parameter != null ? parameter : Porcupine.DEFAULT_SERVER_SCHEME;
-    }
-    
-    public static String parameterHost(ServletContext context) {
-        String parameter = context.getInitParameter(Porcupine.PARAMETER_HOST);
-        return parameter != null ? parameter : Porcupine.DEFAULT_HOST;
-    }
-    
-    public static int parameterPort(ServletContext context) {
-        String parameter = context.getInitParameter(Porcupine.PARAMETER_PORT);
-        return parameter != null ? Integer.parseInt(parameter) : Porcupine.DEFAULT_PORT;
-    }
-    
-    public static String parameterServerContext(ServletContext context) {
-        String parameter = context.getInitParameter(Porcupine.PARAMETER_SERVER_CONTEXT);
-        return parameter != null ? parameter : Porcupine.DEFAULT_SERVER_CONTEXT;
-    }
+//    public static String parameterServerScheme(ServletContext context) {
+//        String parameter = context.getInitParameter(Porcupine.PARAMETER_SERVER_SCHEME);
+//        return parameter != null ? parameter : Porcupine.DEFAULT_SERVER_SCHEME;
+//    }
+//    
+//    public static String parameterHost(ServletContext context) {
+//        String parameter = context.getInitParameter(Porcupine.PARAMETER_HOST);
+//        return parameter != null ? parameter : Porcupine.DEFAULT_HOST;
+//    }
+//    
+//    public static int parameterPort(ServletContext context) {
+//        String parameter = context.getInitParameter(Porcupine.PARAMETER_PORT);
+//        return parameter != null ? Integer.parseInt(parameter) : Porcupine.DEFAULT_PORT;
+//    }
+//    
+//    public static String parameterServerContext(ServletContext context) {
+//        String parameter = context.getInitParameter(Porcupine.PARAMETER_SERVER_CONTEXT);
+//        return parameter != null ? parameter : Porcupine.DEFAULT_SERVER_CONTEXT;
+//    }
     
     public static String parameterAuthorizationEndpoint(ServletContext context) {
         String parameter = context.getInitParameter(Porcupine.PARAMETER_AUTHORIZATION_ENDPOINT);
@@ -116,30 +120,51 @@ public class InitParameter implements Serializable {
         return parameter;
     }
     
-    public static String serverPathWithEndpoint(ServletContext context, String endpoint) {
-        StringBuilder path = new StringBuilder("/")
-                .append(parameterServerContext(context))
-                .append("/").append(endpoint);
-        
-        return path.toString();
-    }
+//    public static String serverPathWithEndpoint(ServletContext context, String endpoint) {
+//        StringBuilder path = new StringBuilder("/")
+//                .append(parameterServerContext(context))
+//                .append("/").append(endpoint);
+//        
+//        return path.toString();
+//    }
     
     public static URI uriAuthorizeEndpoint(ServletContext context) {
-        return URIBuilder.buildURI(parameterServerScheme(context),
-                parameterHost(context), parameterPort(context), 
-                serverPathWithEndpoint(context, parameterAuthorizationEndpoint(context)));
+        URI uri = null;
+        try {
+            String parameter = context.getInitParameter(Porcupine.PARAMETER_AUTHORIZATION_ENDPOINT);
+            uri = new URI(parameter != null ? parameter : Porcupine.DEFAULT_AUTHORIZATION_ENDPOINT);
+        } catch(URISyntaxException ex) {
+            LOG.log(Level.SEVERE, "uriAuthorizeEndpoint() "+
+                    "URI SYNTAX EXCEPTION:{0}", ex.getMessage());
+        }
+        
+        return uri;
     }
     
     public static URI uriTokenEndpoint(ServletContext context) {
-        return URIBuilder.buildURI(parameterServerScheme(context),
-                parameterHost(context), parameterPort(context), 
-                serverPathWithEndpoint(context, parameterTokenEndpoint(context)));
+        URI uri = null;
+        try {
+            String parameter = context.getInitParameter(Porcupine.PARAMETER_TOKEN_ENDPOINT);
+            uri = new URI(parameter != null ? parameter : Porcupine.DEFAULT_TOKEN_ENDPOINT);
+        } catch(URISyntaxException ex) {
+            LOG.log(Level.SEVERE, "uriTokenEndpoint() "+
+                    "URI SYNTAX EXCEPTION:{0}", ex.getMessage());
+        }
+        
+        return uri;
     }
     
     public static URI uriCheckEndpoint(ServletContext context) {
-        return URIBuilder.buildURI(parameterServerScheme(context),
-                parameterHost(context), parameterPort(context), 
-                serverPathWithEndpoint(context, parameterCheckEndpoint(context)));
+        URI uri = null;
+        try {
+            String parameter = context.getInitParameter(Porcupine.PARAMETER_CHECK_ENDPOINT);
+            uri = new URI(parameter != null ? parameter : Porcupine.DEFAULT_CHECK_ENDPOINT);
+        } catch(URISyntaxException ex) {
+            LOG.log(Level.SEVERE, "uriAuthorizeEndpoint() "+
+                    "URI SYNTAX EXCEPTION:{0}", ex.getMessage());
+        }
+        
+        return uri;
     }
 
     public static boolean isParameterAuthenticator(ServletContext context) {
@@ -201,6 +226,63 @@ public class InitParameter implements Serializable {
         return directory != null ? new File(directory, Porcupine.DEFAULT_PORCUPINE_TOKENS) : 
                 new File(System.getProperty("user.home")
                         .concat(File.separator).concat(Porcupine.DEFAULT_PORCUPINE_TOKENS));
+    }
+    
+    
+    // SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL SSL 
+    public static String parameterSSLClientKeyStoreFile(ServletContext context) {
+        String parameter = context.getInitParameter(Porcupine.PARAMETER_SSL_CLIENT_KEYSTORE_FILE);
+        if(parameter == null) 
+            LOG.log(Level.SEVERE, "parameterSSLClientKeyStoreFile() "+
+                    "Porcupine.Porcupine.SSL_CLIENT_KEYSTORE_FILE is missing for SSL Connections");
+        
+        return parameter;
+    }
+    
+    public static String parameterSSLClientKeyStorePassword(ServletContext context) {
+        String parameter = context.getInitParameter(Porcupine.PARAMETER_SSL_CLIENT_KEYSTORE_PASSWORD);
+        if(parameter == null)
+            LOG.log(Level.SEVERE, "parameterSSLClientKeyStorePassword() "+
+                    "Porcupine.Porcupine.SSL_CLIENT_KEYSTORE_PASSWORD is missing for SSL Connections");
+        
+        return parameter;
+    }
+    
+    public static String parameterSSLClientTrustStoreFile(ServletContext context) {
+        String parameter = context.getInitParameter(Porcupine.PARAMETER_SSL_CLIENT_TRUSTSTORE_FILE);
+        if(parameter == null)
+            LOG.log(Level.SEVERE, "parameterSSLClientTrustStoreFile() "+
+                    "Porcupine.SSL_CLIENT_TRUSTSTORE_FILE is missing for SSL Connections");
+        
+        return parameter;
+    }
+    
+    public static String parameterSSLClientTrustStorePassword(ServletContext context) {
+        String parameter = context.getInitParameter(Porcupine.PARAMETER_SSL_CLIENT_TRUSTSTORE_PASSWORD);
+        if(parameter == null)
+            LOG.log(Level.SEVERE, "parameterSSLClientTrustStorePassword() "+
+                "Porcupine.SSL_CLIENT_TRUSTSTORE_PASSWORD is missing for SSL Connections");
+        
+        return parameter;
+    }
+    
+    public static boolean parameterSSLIgnoreCertificate(ServletContext context) {
+        String parameter = context.getInitParameter(Porcupine.PARAMETER_SSL_IGNORE_CERTIFICATE);
+        if(parameter == null) return false;
+        
+        return Boolean.valueOf(parameter);
+    }
+    
+    public static SSLContext createContext(ServletContext context) {
+        SSL ssl;
+        if(parameterSSLIgnoreCertificate(context)) ssl = new SSLIgnoreCertificate();
+        else ssl = new SSLExchangeCertificate();
+        
+        return ssl.keyStoreFile(parameterSSLClientKeyStoreFile(context))
+                  .keyStorePassword(parameterSSLClientKeyStorePassword(context))
+                  .trustStoreFile(parameterSSLClientTrustStoreFile(context))
+                  .trustStorePassword(parameterSSLClientTrustStorePassword(context))
+                  .createContext();
     }
 
 }

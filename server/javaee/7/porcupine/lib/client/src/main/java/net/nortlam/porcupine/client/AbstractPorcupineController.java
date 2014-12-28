@@ -46,9 +46,7 @@ import net.nortlam.porcupine.client.token.ClientTokenManagement;
 import net.nortlam.porcupine.common.Grant;
 import net.nortlam.porcupine.common.InitParameter;
 import net.nortlam.porcupine.common.OAuth2;
-import net.nortlam.porcupine.common.authenticator.Authenticator;
 import net.nortlam.porcupine.common.authenticator.BasicAuthenticator;
-import net.nortlam.porcupine.common.exception.AccessDeniedException;
 import net.nortlam.porcupine.common.token.AccessToken;
 
 /**
@@ -105,8 +103,8 @@ public abstract class AbstractPorcupineController<T>
         return errorValue;  // Not really used
     }
     
-    protected Client clientInstance() {
-        return clientInstance(getUsername(), getPassword()); // Assuming no Authentication
+    protected Client clientInstance(URI uri) {
+        return clientInstance(getUsername(), getPassword(), uri); // Assuming no Authentication
                     // at the endpoints are not necessary
     }
     
@@ -117,16 +115,28 @@ public abstract class AbstractPorcupineController<T>
      * So far, only the BASIC Authentication it's provided and it's activate
      * if username and password are provided
      */
-    protected Client clientInstance(String username, String password){
+    protected Client clientInstance(String username, String password, URI uri){
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        
+        // BASIC or FORM Authentication ?
         if(username != null && password != null) {
             LOG.log(Level.INFO, "clientInstance() Username:{0} Password:{1}",
                     new Object[] {username, password});
-            return ClientBuilder.newClient().register(new BasicAuthenticator(username, password));
+            builder.register(new BasicAuthenticator(username, password));
+        }
+        
+        // SSL ?
+        if(isSSL(uri)) {
+            LOG.log(Level.INFO, "clientInstance() SSL Enabled");
+            builder.sslContext(InitParameter.createContext(getContext()));
         }
         
         // No Authenticator needed
-        LOG.log(Level.INFO, "clientInstance() NO Username, NO Password proivided");
-        return ClientBuilder.newClient();
+        return builder.build();
+    }
+    
+    protected boolean isSSL(URI uri) {
+        return uri.getScheme().equals("https");
     }
     
     protected void redirectAuthorizationServer(Grant grant) {
@@ -192,7 +202,7 @@ public abstract class AbstractPorcupineController<T>
         URI tokenEndpoint = InitParameter.uriTokenEndpoint(context);
         
         // No authentication it will be used against the Authorization Server
-        Client client = clientInstance(null, null);
+        Client client = clientInstance(null, null, tokenEndpoint);
         WebTarget targetTokenEndpoint = client.target(tokenEndpoint);
         
         Form form = new Form();
@@ -391,7 +401,7 @@ public abstract class AbstractPorcupineController<T>
     
     protected WebTarget getWebTarget() {
         URI resource = getResource();
-        this.client = clientInstance(); // Username and Password will activate the authentication
+        this.client = clientInstance(resource); // Username and Password will activate the authentication
         return this.client.target(resource);
     }
     
