@@ -100,6 +100,7 @@ public class PorcupineFilter implements ContainerRequestFilter {
 
         LOG.log(Level.INFO, "filter() No Token Locally. Checking if it's valid Remotely");
         URI uriCheckPoint = uriCheckEndPoint();
+        LOG.log(Level.INFO, "filter() URI Check:{0}", uriCheckPoint);
         Client client = clientInstance(context, request, uriCheckPoint, null, null);
         if(client == null) {
             // Something is wrong with the authentication
@@ -195,8 +196,8 @@ public class PorcupineFilter implements ContainerRequestFilter {
                             ContainerRequestContext request,  URI uri, 
                                             String username, String password) {
 
-        if(!InitParameter.isParameterAuthenticator(context)) 
-            return ClientBuilder.newClient();
+//        if(!InitParameter.isParameterAuthenticator(context)) 
+//            return ClientBuilder.newClient();
         
         Authenticator authenticator = null;
         try {
@@ -210,11 +211,20 @@ public class PorcupineFilter implements ContainerRequestFilter {
             return null;
         }
         
-        return authenticator != null ? ClientBuilder.newClient()
-                                        .register(authenticator) : null;
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        // Is there any form of Authentication used ?
+        if(authenticator != null) builder.register(authenticator);
+        // Is there SSL Enabled ?
+        if(isSSL(uri)) builder.sslContext(InitParameter.createContext(context));
+        
+        return builder.build();
     }
     
     private URI uriCheckEndPoint() {
         return InitParameter.uriCheckEndpoint(context);
+    }
+    
+    private boolean isSSL(URI uri) {
+        return uri.getScheme().equals("https");
     }
 }

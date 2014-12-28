@@ -114,6 +114,9 @@ Accept certificate? [N]o, [T]emporarily, [P]ermenantly : P
 </default-controller>
 
 
+DEFINING WILDFLY's UNIQUE NODE's NAME
+
+/subsystem=transactions:write-attribute(name=node-identifier, value=porcupine-node)
 
 
 

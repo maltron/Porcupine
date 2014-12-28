@@ -1,35 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-    <!-- PORCUPINE Specifics settings for this Client -->
-    <context-param>
-        <param-name>Porcupine.SERVER_SCHEME</param-name>
-        <param-value>http</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.HOST</param-name>
-        <param-value>localhost</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.PORT</param-name>
-        <param-value>8080</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.SERVER_CONTEXT</param-name>
-        <param-value>server</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.AUTHORIZATION_ENDPOINT</param-name>
-        <param-value>oauth2/authorize</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.TOKEN_ENDPOINT</param-name>
-        <param-value>oauth2/token</param-value>
-    </context-param>
-    <context-param>
-        <param-name>Porcupine.ERROR_PAGE</param-name>
-        <param-value>http://localhost:8080/client/faces/errorpage.xhtml</param-value>
-    </context-param>
-    
+    <!-- PORCUPINE PORCUPINE PORCUPINE PORCUPINE -->
+    <!-- Porcupine Specifics Setup Parameters    -->
     <context-param>
         <param-name>Porcupine.CLIENT_ID</param-name>
         <param-value>cG9yY3VwaW5lLWNsaWVudC05OTYyMWZhZC1iOWY3LTRlYzctYTM3MS05ZjU2NWUyM2I5MGU=</param-value>
@@ -38,7 +10,40 @@
         <param-name>Porcupine.CLIENT_SECERT</param-name>
         <param-value>cG9yY3VwaW5lLWNsaWVudC1zZWNyZXQtYjRmM2QyZmYtYmUxZS00ZjkxLWFiZWQtMjAyYWU1MTRhMDgy</param-value>
     </context-param>
-    
+    <context-param>
+        <param-name>Porcupine.AUTHORIZATION_ENDPOINT</param-name>
+        <param-value>https://localhost:8443/server/oauth2/authorize</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.TOKEN_ENDPOINT</param-name>
+        <param-value>https://localhost:8443/server/oauth2/token</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.ERROR_PAGE</param-name>
+        <param-value>http://localhost:8080/client/faces/errorpage.xhtml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.IGNORE_SSL_CERTIFICATE</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.SSL_CLIENT_KEYSTORE_FILE</param-name>
+        <param-value>/Users/mauricio/java/server/as/jboss/current/latest/standalone/configuration/client.keystore.jks</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.SSL_CLIENT_KEYSTORE_PASSWORD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.SSL_CLIENT_TRUSTSTORE_FILE</param-name>
+        <param-value>/Users/mauricio/java/server/as/jboss/current/latest/standalone/configuration/client.truststore.jks</param-value>
+    </context-param>
+    <context-param>
+        <param-name>Porcupine.SSL_CLIENT_TRUSTSTORE_PASSWORD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+    <!-- Porcupine Specifics Setup Parameters    -->
+    <!-- PORCUPINE PORCUPINE PORCUPINE PORCUPINE -->
     
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>

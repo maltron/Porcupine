@@ -38,7 +38,7 @@ public class Resource implements Serializable {
     }
 
     @POST 
-    @Secure(grant=Grant.CLIENT_CREDENTIALS, scope="EMAIL")
+    @Secure(grant=Grant.CLIENT_CREDENTIALS, scope="REAL_NAME")
     @Produces(MediaType.APPLICATION_XML)
     public Person getPerson() {
         return new Person("Mauricio", "Leal");

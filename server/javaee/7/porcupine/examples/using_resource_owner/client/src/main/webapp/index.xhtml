@@ -16,7 +16,7 @@
         <h:form id="form">
             <p:focus id="focus" context="panel"/>
             <p:growl id="messages" showSummary="true"/>
-            <p:panel id="panel" header="Requesting Document from http://localhost:8080/testropc/rest/">
+            <p:panel id="panel" header="Requesting Document from https://localhost:8443/testropc/rest/">
                 <h:panelGrid columns="5" cellpadding="5">
                     <p:commandButton id="buttonRequest" value="Request" 
                                      update="messages inputID inputName" actionListener="#{my.requestDocument}"/>

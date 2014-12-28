@@ -28,29 +28,33 @@ import net.nortlam.porcupine.common.InitParameter;
  *
  * @author Mauricio "Maltron" Leal */
 public class Encrypt implements Serializable {
-
+    
     private static final Logger LOG = Logger.getLogger(Encrypt.class.getName());
 
     public Encrypt() {
     }
     
     public static String encrypt(ServletContext context, String password) {
+        return encrypt(InitParameter.parameterEncryptionAlgorightm(context), 
+                InitParameter.parameterEncoding(context), password);
+    }
+    
+    public static String encrypt(String encryptionAlgorithm, String encoding, 
+                                                            String password) {
         try {
             // Default: SHA-256
-            MessageDigest digest = MessageDigest.getInstance(
-                    InitParameter.parameterEncryptionAlgorightm(context));
+            MessageDigest digest = MessageDigest.getInstance(encryptionAlgorithm);
             // Default: UTF-8
-            digest.update(password.getBytes(
-                                    InitParameter.parameterEncoding(context)));
+            digest.update(password.getBytes(encoding));
             
             return new String(Base64.getEncoder().encode(digest.digest()));
             
         } catch(NoSuchAlgorithmException ex) {
             // No supposed to happen
-            LOG.log(Level.SEVERE, "encrypt() NO SUCH ALGORITHM:{0}", ex.getMessage());
+            LOG.log(Level.SEVERE, "### encrypt() NO SUCH ALGORITHM:{0}", ex.getMessage());
         } catch(UnsupportedEncodingException ex) {
             // No suppoed to happen
-            LOG.log(Level.SEVERE, "encrypt() UNSUPPORTED ENCONDING:{0}",
+            LOG.log(Level.SEVERE, "### encrypt() UNSUPPORTED ENCONDING:{0}",
                     ex.getMessage());
         }
         
